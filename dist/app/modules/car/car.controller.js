@@ -13,31 +13,35 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CarController = void 0;
-const mongoose_1 = __importDefault(require("mongoose"));
 const car_services_1 = require("./car.services");
 const car_validation_1 = __importDefault(require("./car.validation"));
 // create a new car logic
 const handleCreateCar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const carData = req.body;
+        // here its  validating carData via zod
         const validateCarData = car_validation_1.default.parse(carData);
         const newCar = yield car_services_1.CarServices.createCar(validateCarData);
-        res.status(201).json({
-            success: true,
-            message: 'Car created successfully',
-            data: newCar,
-        });
+        if (newCar) {
+            res.status(201).json({
+                status: true,
+                message: 'Car created successfully',
+                data: newCar,
+            });
+            return;
+        }
     }
     catch (error) {
+        // here i implemented the zod error response
         res.status(500).json({
             success: false,
-            message: error.issues[0].message,
-            error: error.issues[0],
-            // here i implemented error response from zod
+            message: 'Validation failed',
+            error: error.issues || error.message,
+            stack: error === null || error === void 0 ? void 0 : error.stack,
         });
     }
 });
-// get all the car with query business logic
+//business logic to get all the car with query
 const handleGetAllCar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
@@ -46,7 +50,7 @@ const handleGetAllCar = (req, res) => __awaiter(void 0, void 0, void 0, function
         const cars = yield car_services_1.CarServices.getAllCars(queryValue);
         if (!cars || !cars.length) {
             res.status(404).json({
-                success: false,
+                status: false,
                 message: queryValue
                     ? `No cars found for "${queryValue}"`
                     : 'No cars found',
@@ -54,14 +58,14 @@ const handleGetAllCar = (req, res) => __awaiter(void 0, void 0, void 0, function
             return;
         }
         res.status(200).json({
-            success: true,
+            status: true,
             message: 'Cars retrieved successfully',
             data: cars,
         });
     }
     catch (error) {
         res.status(500).json({
-            success: false,
+            status: false,
             message: 'Failed to retrieve cars',
             error: error.message,
         });
@@ -71,23 +75,23 @@ const handleGetAllCar = (req, res) => __awaiter(void 0, void 0, void 0, function
 const handleGetCarById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const carId = req.params.carId;
-        if (!carId || !mongoose_1.default.Types.ObjectId.isValid(carId)) {
-            res.status(400).json({
-                success: false,
-                message: 'Invalid car id',
+        const car = yield car_services_1.CarServices.getCarById(carId);
+        if (!car) {
+            res.status(404).json({
+                status: false,
+                message: 'No car found',
             });
             return;
         }
-        const car = yield car_services_1.CarServices.getCarById(carId);
         res.status(200).json({
-            success: true,
+            status: true,
             message: 'Car retrieved successfully',
             data: car,
         });
     }
     catch (error) {
         res.status(500).json({
-            success: false,
+            status: false,
             message: 'Failed to retrieve car',
             error: error.message,
         });
@@ -98,24 +102,31 @@ const handleUpdateCarById = (req, res) => __awaiter(void 0, void 0, void 0, func
     try {
         const carId = req.params.carId;
         const updatedData = req.body;
-        if (!carId || !mongoose_1.default.Types.ObjectId.isValid(carId)) {
+        if (!carId) {
             res.status(400).json({
-                success: false,
-                message: 'Invalid car found with this id. Please enter a valid id',
+                status: false,
+                message: 'Something went wrong. Please try again with valid info',
+            });
+            return;
+        }
+        if (!updatedData || Object.keys(updatedData).length === 0) {
+            res.status(400).json({
+                status: false,
+                message: 'Updated data is required.',
             });
             return;
         }
         const updatedCar = yield car_services_1.CarServices.updateCarById(carId, updatedData);
         res.status(200).json({
-            success: true,
+            status: true,
             message: 'Car updated successfully',
             data: updatedCar,
         });
     }
     catch (error) {
         res.status(500).json({
-            success: false,
-            message: 'Failed to update car',
+            status: false,
+            message: 'Something went wrong while updating the car',
             error: error.message,
         });
     }
@@ -124,24 +135,24 @@ const handleUpdateCarById = (req, res) => __awaiter(void 0, void 0, void 0, func
 const handleDeleteCarById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const carId = req.params.carId;
-        if (!carId || !mongoose_1.default.Types.ObjectId.isValid(carId)) {
+        if (!carId) {
             res.status(400).json({
-                success: false,
-                message: 'Invalid car found with this id. Please enter a valid id',
+                status: false,
+                message: 'Something went wrong. Please try again with valid info',
             });
             return;
         }
         yield car_services_1.CarServices.deleteCarById(carId);
         res.status(200).json({
-            success: true,
+            status: true,
             message: 'Car deleted successfully',
             data: {},
         });
     }
     catch (error) {
         res.status(500).json({
-            success: false,
-            message: 'Failed to delete car',
+            status: false,
+            message: 'Something went wrong while deleting !',
             error: error.message,
         });
     }

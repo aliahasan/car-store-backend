@@ -3,11 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const zod_1 = require("zod");
 const carValidationData = zod_1.z.object({
     brand: zod_1.z
-        .string()
-        .min(2, 'The brand name is required. Please provide a valid car brand.'),
+        .string({ message: 'brand name is required and must be a string type' })
+        .min(2, 'Please provide a valid car brand name.'),
     model: zod_1.z
-        .string()
-        .min(1, 'The model name is required. Please specify the car model.'),
+        .string({
+        message: 'The model name is required, model name must be a string',
+    })
+        .min(1, 'Please specify the car model.'),
     year: zod_1.z
         .number()
         .int()
@@ -20,16 +22,15 @@ const carValidationData = zod_1.z.object({
     }),
     description: zod_1.z
         .string()
-        .min(20, 'A brief description of the car is required.')
-        .max(300, 'The description should not exceed 300 characters.'),
+        .min(20, 'A brief description of the car is required.'),
     quantity: zod_1.z
-        .number()
-        .int()
-        .gte(1, 'The quantity must be at least 1.')
-        .lte(50, 'The quantity cannot exceed 100.'),
+        .number({ message: 'quantity is is required' })
+        .int({ message: 'quantity have to be an integer number and at least 1' }),
     inStock: zod_1.z.boolean().default(true),
     price: zod_1.z
-        .number()
+        .number({
+        message: 'price is required.please provide a valid price of the car',
+    })
         .positive('The price must be a positive number.')
         .min(1, 'The price must be at least $1.'),
 });

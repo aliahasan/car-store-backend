@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CarServices = void 0;
 const car_model_1 = require("./car.model");
+// creating a  new car
 const createCar = (carData) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newCar = yield car_model_1.Car.create(carData);
@@ -20,44 +21,50 @@ const createCar = (carData) => __awaiter(void 0, void 0, void 0, function* () {
         throw new Error(error.message || 'Failed to create the car');
     }
 });
+// get all the car services logic here
 const getAllCars = (queryValue) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const query = {};
         if (queryValue) {
-            const search = new RegExp(queryValue, 'i');
-            query.$or = [
-                { brand: search },
-                { model: search },
-                { description: search },
-            ];
+            const search = new RegExp(queryValue, 'i'); // converted to case insensitive string by regexp
+            query.$or = [{ brand: search }, { model: search }, { category: search }];
         }
-        const cars = yield car_model_1.Car.find(query);
+        const cars = yield car_model_1.Car.find(query).sort({ createdAt: -1 });
         return cars;
     }
     catch (error) {
         throw new Error(error.message || 'Failed to retrieved all the cars');
     }
 });
+// get a specific  car by its own id
 const getCarById = (_id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const car = yield car_model_1.Car.findById(_id);
+        if (!car) {
+            throw new Error('Car not found');
+        }
         return car;
     }
     catch (error) {
         throw new Error(error.message || 'Failed to get the car');
     }
 });
+// update  a specific car by its own id
 const updateCarById = (_id, updatedCarData) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const car = yield car_model_1.Car.findByIdAndUpdate(_id, updatedCarData, {
             new: true,
         });
+        if (!car) {
+            throw new Error('something went wrong. please try again');
+        }
         return car;
     }
     catch (error) {
         throw new Error(error.message || 'Failed to update the car');
     }
 });
+// delete  a specific car by its own id
 const deleteCarById = (_id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const car = yield car_model_1.Car.findByIdAndDelete(_id);

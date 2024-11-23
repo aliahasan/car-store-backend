@@ -77,8 +77,6 @@ const carSchema = new mongoose_1.Schema({
             true,
             'The quantity is required. Please specify how many cars are available.',
         ],
-        min: [1, 'The quantity must be at least 1.'],
-        max: [100, 'The quantity cannot exceed 100.'],
     },
     inStock: {
         type: Boolean,
