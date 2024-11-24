@@ -30,13 +30,13 @@ const getAllCars = async (queryValue?: string) => {
 // get a specific  car by its own id
 const getCarById = async (_id: string) => {
   try {
-    const car = await Car.findById(_id);
+    const car = await Car.findOne({ _id });
     if (!car) {
-      throw new Error('Car not found');
+      throw new Error('Something went wrong! Invalid input');
     }
     return car;
   } catch (error: any) {
-    throw new Error(error.message || 'Failed to get the car');
+    throw new Error(error);
   }
 };
 

@@ -78,7 +78,7 @@ const handleGetCarById = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(500).json({
       status: false,
-      message: 'Failed to retrieve car',
+      message: 'no car found',
       error: error.message,
     });
   }
