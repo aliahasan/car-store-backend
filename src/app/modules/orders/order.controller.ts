@@ -21,8 +21,8 @@ const handlePlaceOrder = async (req: Request, res: Response) => {
     // here i tried to implement the zod error response
     res.status(500).json({
       success: false,
-      message: error.message,
-      error: 'Validation failed',
+      message: 'Validation failed',
+      error: error?.issues || error.message,
     });
   }
 };
