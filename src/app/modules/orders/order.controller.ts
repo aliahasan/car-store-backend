@@ -22,7 +22,7 @@ const handlePlaceOrder = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: 'Validation failed',
-      error: error?.issues || error.message,
+      error: error?.issues[0] || error.message,
     });
   }
 };
