@@ -51,7 +51,7 @@ const updateCarById = async (_id: string, updatedCarData: Partial<ICar>) => {
     }
     return car;
   } catch (error: any) {
-    throw new Error(error.message || 'Failed to update the car');
+    throw new Error(error);
   }
 };
 
