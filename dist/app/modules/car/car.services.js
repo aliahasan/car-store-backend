@@ -41,12 +41,12 @@ const getCarById = (_id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const car = yield car_model_1.Car.findById(_id);
         if (!car) {
-            throw new Error('Car not found');
+            throw new Error('Something went wrong! Invalid input');
         }
         return car;
     }
     catch (error) {
-        throw new Error(error.message || 'Failed to get the car');
+        throw new Error(error);
     }
 });
 // update  a specific car by its own id
@@ -61,7 +61,7 @@ const updateCarById = (_id, updatedCarData) => __awaiter(void 0, void 0, void 0,
         return car;
     }
     catch (error) {
-        throw new Error(error.message || 'Failed to update the car');
+        throw new Error(error);
     }
 });
 // delete  a specific car by its own id

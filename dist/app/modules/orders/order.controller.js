@@ -30,8 +30,8 @@ const handlePlaceOrder = (req, res) => __awaiter(void 0, void 0, void 0, functio
         // here i tried to implement the zod error response
         res.status(500).json({
             success: false,
-            message: error.message,
-            error: 'Validation failed',
+            message: 'Validation failed',
+            error: (error === null || error === void 0 ? void 0 : error.issues[0]) || error.message,
         });
     }
 });

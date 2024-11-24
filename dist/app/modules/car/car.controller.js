@@ -36,7 +36,7 @@ const handleCreateCar = (req, res) => __awaiter(void 0, void 0, void 0, function
         res.status(500).json({
             success: false,
             message: 'Validation failed',
-            error: error.issues || error.message,
+            error: (error === null || error === void 0 ? void 0 : error.issues[0]) || error.message,
             stack: error === null || error === void 0 ? void 0 : error.stack,
         });
     }
@@ -92,7 +92,7 @@ const handleGetCarById = (req, res) => __awaiter(void 0, void 0, void 0, functio
     catch (error) {
         res.status(500).json({
             status: false,
-            message: 'Failed to retrieve car',
+            message: 'no car found',
             error: error.message,
         });
     }
