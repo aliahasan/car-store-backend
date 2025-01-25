@@ -1,12 +1,12 @@
-import dotenv from 'dotenv';
+import { Server } from 'http';
 import mongoose from 'mongoose';
 import app from './app';
 import config from './app/config';
-dotenv.config();
-async function server() {
+
+let server: Server;
+async function main() {
   try {
     await mongoose.connect(config.database_url as string);
-    console.log('Connected to MongoDB');
     app.listen(config.port, () => {
       console.log(`Server is running on port ${config.port}`);
     });
@@ -15,4 +15,4 @@ async function server() {
     process.exit(1);
   }
 }
-server();
+main();
