@@ -5,7 +5,7 @@ import config from './app/config';
 dotenv.config();
 async function server() {
   try {
-    await mongoose.connect(config.database_uri as string);
+    await mongoose.connect(config.database_url as string);
     console.log('Connected to MongoDB');
     app.listen(config.port, () => {
       console.log(`Server is running on port ${config.port}`);
