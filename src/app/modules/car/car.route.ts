@@ -7,4 +7,4 @@ router.get('/', CarController.handleGetAllCar);
 router.get('/:carId', CarController.handleGetCarById);
 router.put('/:carId', CarController.handleUpdateCarById);
 router.delete('/:carId', CarController.handleDeleteCarById);
-export const CarRoutes = router;
+export const carRoutes = router;
