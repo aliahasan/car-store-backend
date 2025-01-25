@@ -12,24 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const dotenv_1 = __importDefault(require("dotenv"));
-const mongoose_1 = __importDefault(require("mongoose"));
-const app_1 = __importDefault(require("./app"));
-const config_1 = __importDefault(require("./app/config"));
-dotenv_1.default.config();
-function server() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            yield mongoose_1.default.connect(config_1.default.database_url);
-            console.log('Connected to MongoDB');
-            app_1.default.listen(config_1.default.port, () => {
-                console.log(`Server is running on port ${config_1.default.port}`);
-            });
-        }
-        catch (error) {
-            console.error('Error connecting to MongoDB:', error);
-            process.exit(1);
-        }
-    });
-}
-server();
+const tryCatchAsync_1 = __importDefault(require("../utils/tryCatchAsync"));
+const validateRequest = (schema) => {
+    const data = (0, tryCatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+        const parsedBody = yield schema.parseAsync(req.body, req.cookies);
+        req.body = parsedBody;
+        next();
+    }));
+    return data;
+};
+exports.default = validateRequest;
