@@ -1,5 +1,4 @@
 import { Model } from 'mongoose';
-import { user_role } from './user.constant';
 
 export type TUser = {
   name: string;
@@ -19,5 +18,3 @@ export interface UserModel extends Model<TUser> {
   ): Promise<boolean>;
   isUserExist(_id: string): Promise<TUser>;
 }
-
-export type TUserRole = keyof typeof user_role;

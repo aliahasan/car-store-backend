@@ -1,41 +1,49 @@
 import { z } from 'zod';
 
-const carValidationData = z.object({
-  brand: z
-    .string({ message: 'brand name is required and must be a string type' })
-    .min(2, 'Please provide a valid car brand name.'),
-  model: z
-    .string({
-      message: 'The model name is required, model name must be a string',
-    })
-    .min(1, 'Please specify the car model.'),
+const CarCategoryEnum = z.enum([
+  'Sedan',
+  'SUV',
+  'Truck',
+  'Coupe',
+  'Convertible',
+  'Van',
+  'Other',
+]);
+
+const FuelTypeEnum = z.enum(['Petrol', 'Diesel', 'Electric', 'Hybrid']);
+
+const TransmissionEnum = z.enum(['Manual', 'Automatic']);
+
+export const carValidationSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  brand: z.string().min(1, 'Brand is required'),
+  model: z.string().min(1, 'Model is required'),
   year: z
     .number()
-    .int()
-    .gte(
-      1886,
-      'The year must be 1886 or later, the year of the first car invention.'
-    )
-    .lte(new Date().getFullYear(), 'The year cannot exceed the current year.'),
-  category: z.enum(['Sedan', 'SUV', 'Truck', 'Coupe', 'Convertible'], {
-    errorMap: () => ({
-      message:
-        'Category must be one of the following: Sedan, SUV, Truck, Coupe, or Convertible.',
-    }),
-  }),
-  description: z
-    .string()
-    .min(20, 'A brief description of the car is required.'),
-  quantity: z
-    .number({ message: 'quantity is is required' })
-    .int({ message: 'quantity have to be an integer number and at least 1' }),
-  inStock: z.boolean().default(true),
-  price: z
-    .number({
-      message: 'price is required.please provide a valid price of the car',
-    })
-    .positive('The price must be a positive number.')
-    .min(1, 'The price must be at least $1.'),
+    .min(1886, 'Year must be at least 1886')
+    .max(new Date().getFullYear(), 'Year cannot be in the future'),
+  price: z.number().min(0, 'Price must be a positive number'),
+  category: CarCategoryEnum,
+  description: z.string().min(1, 'Description is required'),
+  quantity: z.number().min(0, 'Quantity cannot be negative'),
+  inStock: z.boolean().optional(),
+  color: z.array(z.string().min(1)).nonempty('Color array cannot be empty'),
+  mileage: z.number().min(0, 'Mileage cannot be negative'),
+  fuelType: FuelTypeEnum,
+  transmission: TransmissionEnum,
+  engineCapacity: z.number().min(0, 'Engine capacity must be positive'),
+  seatingCapacity: z.number().min(1, 'Seating capacity must be at least 1'),
+  features: z.array(z.string()).min(1, 'At least one feature is required'),
+  rating: z.number().min(0, 'Rating must be between 0 and 5').max(5).optional(),
+  images: z.array(z.string().url('Must be a valid image URL')).optional(),
+  warranty: z.string().min(1, 'Warranty information is required'),
+  discount: z.number().min(0).max(100).optional(),
 });
 
-export default carValidationData;
+const updateCarValidationSchema = carValidationSchema.partial();
+
+export const carValidations = {
+  carValidationSchema,
+  updateCarValidationSchema,
+};
+// export type ICarValidation = z.infer<typeof CarSchema>;

@@ -1,71 +1,60 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { StatusCodes } from 'http-status-codes';
+import QueryBuilder from '../../builder/QueryBuilder';
+import AppError from '../../errors/AppError';
 import { ICar } from './car.interface';
-import { Car } from './car.model';
+import Car from './car.model';
 
 // creating a  new car
 const createCar = async (carData: ICar) => {
-  try {
-    const newCar = await Car.create(carData);
-    return newCar;
-  } catch (error: any) {
-    throw new Error(error.message || 'Failed to create the car');
-  }
+  const car = new Car(carData);
+  const result = await car.save();
+  return result;
 };
 
 // get all the car services logic here
-const getAllCars = async (queryValue?: string) => {
-  try {
-    const query: any = {};
-    if (queryValue) {
-      const search = new RegExp(queryValue, 'i'); // converted to case insensitive string by regexp
-      query.$or = [{ brand: search }, { model: search }, { category: search }];
-    }
-    const cars = await Car.find(query).sort({ createdAt: -1 });
-    return cars;
-  } catch (error: any) {
-    throw new Error(error.message || 'Failed to retrieved all the cars');
-  }
+const getAllCars = async (query: Record<string, unknown>) => {
+  const carsQuery = new QueryBuilder(Car.find(), query)
+    .search([])
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+  const meta = await carsQuery.countTotal();
+  const result = await carsQuery.queryModel;
+  return {
+    meta,
+    result,
+  };
 };
 
 // get a specific  car by its own id
-const getCarById = async (_id: string) => {
-  try {
-    const car = await Car.findById(_id);
-    if (!car) {
-      throw new Error('Something went wrong! Invalid input');
-    }
-    return car;
-  } catch (error: any) {
-    throw new Error(error);
+const getCarById = async (carId: string) => {
+  const car = await Car.findById(carId);
+  if (!car) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'car not found');
   }
+  return car;
 };
 
 // update  a specific car by its own id
-const updateCarById = async (_id: string, updatedCarData: Partial<ICar>) => {
-  try {
-    const car = await Car.findByIdAndUpdate(_id, updatedCarData, {
-      new: true,
-    });
-    if (!car) {
-      throw new Error('something went wrong. please try again');
-    }
-    return car;
-  } catch (error: any) {
-    throw new Error(error);
+const updateCarById = async (carId: string, payload: Partial<ICar>) => {
+  const car = await Car.findByIdAndUpdate(carId, payload, {
+    new: true,
+    runValidators: true,
+  });
+  if (!car) {
+    throw new Error('something went wrong. please try again');
   }
+  return car;
 };
 
 // delete  a specific car by its own id
-const deleteCarById = async (_id: string) => {
-  try {
-    const car = await Car.findByIdAndDelete(_id);
-    if (!car) {
-      throw new Error('Car not found');
-    }
-    return car;
-  } catch (error: any) {
-    throw new Error(error.message || 'Failed to delete the car');
+const deleteCarById = async (carId: string) => {
+  const car = await Car.findByIdAndDelete(carId);
+  if (!car) {
+    throw new Error('Car not found');
   }
+  return true;
 };
 
 export const CarServices = {

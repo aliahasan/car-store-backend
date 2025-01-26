@@ -2,7 +2,7 @@ import { StatusCodes } from 'http-status-codes';
 import { JwtPayload } from 'jsonwebtoken';
 import config from '../config';
 import AppError from '../errors/AppError';
-import { TUserRole } from '../modules/user/user.interface';
+import { TUserRole } from '../modules/user/user.constant';
 import User from '../modules/user/user.model';
 import { verifyToken } from '../modules/user/user.utils';
 import tryCatchAsync from '../utils/tryCatchAsync';

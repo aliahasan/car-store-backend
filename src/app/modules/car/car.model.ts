@@ -3,80 +3,108 @@ import { ICar } from './car.interface';
 
 const carSchema = new Schema<ICar>(
   {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     brand: {
       type: String,
-      required: [
-        true,
-        'The brand name is required. Please provide a valid car brand.',
-      ],
+      required: true,
+      trim: true,
     },
     model: {
       type: String,
-      required: [
-        true,
-        'The model name is required. Please specify the car model.',
-      ],
+      required: true,
+      trim: true,
     },
     year: {
       type: Number,
-      required: [
-        true,
-        'The manufacturing year is required. Please provide a valid year.',
-      ],
-      min: [
-        1886,
-        'The year must be 1886 or later, the year of the first car invention.',
-      ],
-      max: [
-        new Date().getFullYear(),
-        'The year cannot exceed the current year.',
-      ],
-    },
-    category: {
-      type: String,
-      enum: {
-        values: ['Sedan', 'SUV', 'Truck', 'Coupe', 'Convertible'],
-        message:
-          '{VALUE} is not a valid category. Category must be one of the following: Sedan, SUV, Truck, Coupe, or Convertible.',
-      },
-      required: [
-        true,
-        'The car category is required. Please select a valid category.',
-      ],
-    },
-    description: {
-      type: String,
-      required: [true, 'A brief description of the car is required.'],
-      maxlength: [300, 'The description should not exceed 300 characters.'],
-    },
-    quantity: {
-      type: Number,
-      required: [
-        true,
-        'The quantity is required. Please specify how many cars are available.',
-      ],
-    },
-    inStock: {
-      type: Boolean,
-      default: true,
-      required: [
-        true,
-        'The stock status is required. Please specify if the car is in stock.',
-      ],
+      required: true,
+      min: 1886,
     },
     price: {
       type: Number,
-      required: [true, 'The price is required. Please specify the car price.'],
-      min: [1, 'The price must be at least $1.'],
-      validate: {
-        validator: (value: number) => value > 0,
-        message: 'The price must be a positive number.',
-      },
+      required: true,
+      min: 1,
+    },
+    category: {
+      type: String,
+      enum: ['Sedan', 'SUV', 'Truck', 'Coupe', 'Convertible', 'Van', 'Other'],
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+    inStock: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+    color: {
+      type: [String],
+      required: true,
+    },
+    mileage: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+    fuelType: {
+      type: String,
+      enum: ['Petrol', 'Diesel', 'Electric', 'Hybrid'],
+      required: true,
+    },
+    transmission: {
+      type: String,
+      enum: ['Manual', 'Automatic'],
+      required: true,
+    },
+    engineCapacity: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    seatingCapacity: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+    features: {
+      type: [String],
+      required: true,
+    },
+    rating: {
+      type: Number,
+      min: 0,
+      max: 5,
+    },
+    images: {
+      type: [String],
+    },
+    warranty: {
+      type: String,
+      required: true,
+      default: '2 year',
+    },
+    discount: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 100, // Discount percentage
     },
   },
   {
-    timestamps: true, // Adds createdAt and updatedAt fields automatically
+    timestamps: true,
   }
 );
 
-export const Car = mongoose.model<ICar>('Car', carSchema);
+const Car = mongoose.model<ICar>('Car', carSchema);
+export default Car;
