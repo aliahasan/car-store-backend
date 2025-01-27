@@ -3,27 +3,28 @@ import { TOrder } from './order.interface';
 
 const orderSchema = new Schema<TOrder>(
   {
-    email: {
+    user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    cars: {
+      type: Schema.Types.ObjectId,
+      ref: 'Car',
+      required: true,
+    },
+    quantity: { type: Number, required: true },
+    totalPrice: { type: Number, required: true },
+    status: {
       type: String,
+      enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
       required: true,
+      default: 'Pending',
     },
-    car: {
-      type: String,
-      required: true,
-    },
-    quantity: {
-      type: Number,
-      required: true,
-    },
-    totalPrice: {
-      type: Number,
-      required: true,
-    },
+    transactionId: { type: String, required: true },
   },
   {
     timestamps: true,
   }
 );
 
-const Order = mongoose.model<TOrder>('Orders', orderSchema);
+// Create the model
+const Order = mongoose.model<TOrder>('Order', orderSchema);
+
 export default Order;

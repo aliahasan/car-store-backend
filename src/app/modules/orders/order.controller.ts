@@ -1,31 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
+import sendResponse from '../../utils/sendResponse';
+import tryCatchAsync from '../../utils/tryCatchAsync';
 import { orderService } from './order.services';
-import { orderValidation } from './order.validation';
 
-const handlePlaceOrder = async (req: Request, res: Response) => {
-  try {
-    const orderData = req.body;
-    //  here passed the request body data to zod to validate
-    const validateOrderInfo = orderValidation.parse(orderData);
-    const result = await orderService.placeOrder(validateOrderInfo);
-
-    if (result) {
-      res.status(200).json({
-        success: true,
-        message: 'Order placed successfully',
-        data: result,
-      });
-    }
-  } catch (error: any) {
-    // here i tried to implement the zod error response
-    res.status(500).json({
-      success: false,
-      message: 'Validation failed',
-      error: error?.issues[0] || error.message,
-    });
-  }
-};
+const handlePlaceOrder = tryCatchAsync(async (req, res) => {
+  const { userId } = req.user;
+  const orderData = req.body;
+  const result = await orderService.placeOrder(userId, orderData);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.CREATED,
+    message: 'Order placed successfully',
+    data: result,
+  });
+});
 
 const handleTotalRevenue = async (req: Request, res: Response) => {
   try {

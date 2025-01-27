@@ -1,43 +1,56 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Car } from '../car/car.model';
-import { TOrder } from './order.interface';
+import { StatusCodes } from 'http-status-codes';
+import AppError from '../../errors/AppError';
+import stripe from '../../stripe/stripe.config';
+import Car from '../car/car.model';
 import Order from './order.model';
 
-const placeOrder = async (orderInfo: TOrder) => {
+interface OrderPayload {
+  car: string;
+  quantity: number;
+}
+const placeOrder = async (userId: string, payload: OrderPayload) => {
+  const car = await Car.findById(payload.car);
+  if (!car) {
+    throw new AppError(
+      StatusCodes.NOT_FOUND,
+      'Car not found. Please provide valid car information.'
+    );
+  }
+  if (payload.quantity > car.quantity || !car.isStock) {
+    throw new AppError(
+      StatusCodes.BAD_REQUEST,
+      'Insufficient stock. Car is not available anymore.'
+    );
+  }
+
+  const totalPrice = car.price * payload.quantity;
+  if (totalPrice <= 0) {
+    throw new AppError(
+      StatusCodes.BAD_REQUEST,
+      'Invalid total price calculated.'
+    );
+  }
+
   try {
-    const { email, car, quantity, totalPrice } = orderInfo;
-
-    const selectedCar = await Car.findById(car);
-    if (!selectedCar) {
-      throw new Error('Car not found. Please provide valid car information.');
-    }
-
-    // Ensure there is sufficient stock for the order
-    if (!selectedCar.inStock || selectedCar.quantity < quantity) {
-      throw new Error(`Insufficient stock. Car is not available anymore.`);
-    }
-
-    // Update car's inventory: reduce quantity and update stock status if necessary
-    selectedCar.quantity -= quantity;
-    if (selectedCar.quantity === 0) {
-      selectedCar.inStock = false;
-    }
-    // Save the updated car inventory
-    await selectedCar.save();
-
-    // Create a new order in the Order collection
-    const order = new Order({
-      email: email,
-      car: car,
-      quantity: quantity,
-      totalPrice: totalPrice,
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: totalPrice * 100,
+      currency: 'usd',
+      automatic_payment_methods: {
+        enabled: true,
+      },
     });
-
-    // Save the new order to the database
-    await order.save();
-    return order;
-  } catch (error: any) {
-    throw new Error(error.message || 'something went wrong');
+    return {
+      userId,
+      totalPrice,
+      clientSecret: paymentIntent.client_secret!,
+      car: car._id,
+    };
+  } catch (error) {
+    throw new AppError(
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      `Failed to create payment intent: ${(error as Error).message}`
+    );
   }
 };
 

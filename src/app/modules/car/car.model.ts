@@ -1,7 +1,9 @@
-import mongoose, { Schema } from 'mongoose';
-import { ICar } from './car.interface';
+import { StatusCodes } from 'http-status-codes';
+import mongoose, { Schema, Types } from 'mongoose';
+import AppError from '../../errors/AppError';
+import { CarMOdel, TCar } from './car.interface';
 
-const carSchema = new Schema<ICar>(
+const carSchema = new Schema<TCar, CarMOdel>(
   {
     name: {
       type: String,
@@ -42,11 +44,6 @@ const carSchema = new Schema<ICar>(
       type: Number,
       required: true,
       min: 1,
-    },
-    inStock: {
-      type: Boolean,
-      required: true,
-      default: true,
     },
     color: {
       type: [String],
@@ -100,11 +97,25 @@ const carSchema = new Schema<ICar>(
       min: 0,
       max: 100, // Discount percentage
     },
+    isStock: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-const Car = mongoose.model<ICar>('Car', carSchema);
+carSchema.statics.isCarExist = async function (
+  carId: Types.ObjectId
+): Promise<TCar> {
+  const car = await this.findById(carId);
+  if (!car) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Car not found');
+  }
+  return car;
+};
+
+const Car = mongoose.model<TCar, CarMOdel>('Car', carSchema);
 export default Car;
