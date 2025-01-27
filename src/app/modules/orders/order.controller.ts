@@ -17,6 +17,17 @@ const handlePlaceOrder = tryCatchAsync(async (req, res) => {
   });
 });
 
+const handleGetAllUsersOrders = tryCatchAsync(async (req, res) => {
+  const { userId } = req.user;
+  const result = await orderService.getAllUsersOrders(userId);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'User orders fetched successfully',
+    data: result,
+  });
+});
+
 const handleTotalRevenue = async (req: Request, res: Response) => {
   try {
     const totalRevenue = await orderService.calculateTotalRevenue();
@@ -39,4 +50,5 @@ const handleTotalRevenue = async (req: Request, res: Response) => {
 export const orderController = {
   handlePlaceOrder,
   handleTotalRevenue,
+  handleGetAllUsersOrders,
 };

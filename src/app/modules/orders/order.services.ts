@@ -55,6 +55,20 @@ const placeOrder = async (userId: string, payload: OrderPayload) => {
 };
 
 // calculate the total revenue by aggregation pipeline
+const getAllUsersOrders = async (userId: string) => {
+  const isAuthenticated = await Order.isAuthenticated(userId);
+  if (!isAuthenticated) {
+    throw new AppError(
+      StatusCodes.FORBIDDEN,
+      'You are forbidden to access this recourse'
+    );
+  }
+  const result = await Order.find({ user: userId });
+  if (!result) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'No orders found');
+  }
+  return result;
+};
 
 const calculateTotalRevenue = async () => {
   try {
@@ -81,5 +95,6 @@ const calculateTotalRevenue = async () => {
 
 export const orderService = {
   placeOrder,
+  getAllUsersOrders,
   calculateTotalRevenue,
 };

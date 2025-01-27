@@ -34,7 +34,17 @@ const handleLoginUser = tryCatchAsync(async (req, res) => {
   });
 });
 
+const handleLogOutUser = tryCatchAsync(async (req, res) => {
+  await userServices.logoutUser(req, res);
+  res.status(200).json({
+    success: true,
+    message: 'User logged out successfully',
+    data: null,
+  });
+});
+
 export const userControllers = {
   handleRegisterUser,
   handleLoginUser,
+  handleLogOutUser,
 };

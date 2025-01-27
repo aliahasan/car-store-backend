@@ -1,3 +1,4 @@
+import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import config from '../../config';
 import AppError from '../../errors/AppError';
@@ -42,7 +43,17 @@ const loginUser = async (payload: Payload) => {
   };
 };
 
+const logoutUser = async (req: Request, res: Response) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: config.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+    maxAge: 0,
+  });
+};
+
 export const userServices = {
   createUser,
   loginUser,
+  logoutUser,
 };

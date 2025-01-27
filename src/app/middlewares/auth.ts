@@ -20,7 +20,10 @@ const auth = (...requiredRoles: TUserRole[]) => {
     const { role, userId } = decoded;
     const user = await User.findById(userId);
     if (!user) {
-      throw new AppError(StatusCodes.UNAUTHORIZED, 'you are not authorized');
+      throw new AppError(
+        StatusCodes.UNAUTHORIZED,
+        'you are not access this resource'
+      );
     }
     if (user?.isBlocked) {
       throw new AppError(
@@ -30,7 +33,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
     }
     if (requiredRoles && !requiredRoles.includes(role)) {
       throw new AppError(
-        StatusCodes.FORBIDDEN,
+        StatusCodes.UNAUTHORIZED,
         'you are not authorized to access this resource'
       );
     }

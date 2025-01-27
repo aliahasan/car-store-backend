@@ -1,10 +1,10 @@
 import mongoose, { Schema } from 'mongoose';
-import { TOrder } from './order.interface';
+import { TOrder, TOrderModel } from './order.interface';
 
-const orderSchema = new Schema<TOrder>(
+const orderSchema = new Schema<TOrder, TOrderModel>(
   {
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    cars: {
+    car: {
       type: Schema.Types.ObjectId,
       ref: 'Car',
       required: true,
@@ -24,7 +24,14 @@ const orderSchema = new Schema<TOrder>(
   }
 );
 
+orderSchema.statics.isAuthenticated = async function (
+  id: string
+): Promise<boolean> {
+  const user = await this.findById({ user: id });
+  return !!user;
+};
+
 // Create the model
-const Order = mongoose.model<TOrder>('Order', orderSchema);
+const Order = mongoose.model<TOrder, TOrderModel>('Order', orderSchema);
 
 export default Order;

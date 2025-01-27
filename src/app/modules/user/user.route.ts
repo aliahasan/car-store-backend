@@ -15,5 +15,6 @@ router.post(
   validateRequest(userValidations.loginValidationSchema),
   userControllers.handleLoginUser
 );
+router.post('/logout', userControllers.handleLogOutUser);
 
 export const userRoutes = router;
