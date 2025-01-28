@@ -8,12 +8,22 @@ import { orderService } from './order.services';
 const handlePlaceOrder = tryCatchAsync(async (req, res) => {
   const { userId } = req.user;
   const orderData = req.body;
-  const result = await orderService.placeOrder(userId, orderData);
+  const result = await orderService.placeOrder(userId, orderData, req.ip!);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.CREATED,
     message: 'Order placed successfully',
     data: result,
+  });
+});
+
+const verifyPayment = tryCatchAsync(async (req, res) => {
+  const order = await orderService.verifyPayment(req.query.order_id as string);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Order verified successfully',
+    data: order,
   });
 });
 
@@ -51,4 +61,5 @@ export const orderController = {
   handlePlaceOrder,
   handleTotalRevenue,
   handleGetAllUsersOrders,
+  verifyPayment,
 };
