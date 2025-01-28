@@ -20,6 +20,13 @@ const placeOrder = async (
     throw new AppError(StatusCodes.NOT_FOUND, 'User not found');
   }
 
+  if (user.isBlocked) {
+    throw new AppError(
+      StatusCodes.FORBIDDEN,
+      'Your account is blocked, you can not place any order'
+    );
+  }
+
   const cars = payload.cars;
   let totalPrice = 0;
   const carDetails = await Promise.all(

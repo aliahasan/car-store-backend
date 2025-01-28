@@ -1,11 +1,11 @@
 import { Model } from 'mongoose';
 
 export interface TCar {
-  name: string; // Car name
-  brand: string; // Manufacturer
-  model: string; // Specific model
-  year: number; // Manufacturing year
-  price: number; // Price of the car
+  name: string;
+  brand: string;
+  model: string;
+  year: number;
+  price: number;
   category:
     | 'Sedan'
     | 'SUV'
@@ -14,19 +14,20 @@ export interface TCar {
     | 'Convertible'
     | 'Van'
     | 'Other';
-  description: string; // Detailed description of the car
-  quantity: number; // Available quantity
-  isStock: boolean; // Whether the car is in stock
-  color: string[]; // Available colors for the car
+  description: string;
+  quantity: number;
+  color: string[];
   mileage: number; // Mileage (in km per liter or miles per gallon)
-  fuelType: 'Petrol' | 'Diesel' | 'Electric' | 'Hybrid'; // Fuel type
-  transmission: 'Manual' | 'Automatic'; // Transmission type
-  engineCapacity: number; // Engine size in liters
-  seatingCapacity: number; // Number of seats
-  features: string[]; // List of additional features (e.g., sunroof, navigation system)
-  rating: number; // Customer rating (1-5 scale)
-  images: string | string[]; // Single image URL or an array of URLs
+  fuelType: 'Petrol' | 'Diesel' | 'Electric' | 'Hybrid';
+  transmission: 'Manual' | 'Automatic';
+  engineCapacity: number;
+  seatingCapacity: number;
+  features: string[];
+  rating: number;
+  images: string | string[];
   warranty: string; // Warranty information (e.g., "5 years/100,000 km")
+  isStock: boolean;
+
   discount?: number; // Optional field for discounts
 }
 

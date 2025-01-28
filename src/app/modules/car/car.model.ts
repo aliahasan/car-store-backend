@@ -85,17 +85,12 @@ const carSchema = new Schema<TCar, CarMOdel>(
     },
     images: {
       type: [String],
+      required: true,
     },
     warranty: {
       type: String,
       required: true,
       default: '2 year',
-    },
-    discount: {
-      type: Number,
-      default: 0,
-      min: 0,
-      max: 100, // Discount percentage
     },
     isStock: {
       type: Boolean,

@@ -12,6 +12,7 @@ router.post(
   CarController.handleCreateCar
 );
 router.get('/all-cars', CarController.handleGetAllCar);
+
 router.get('/:carId', CarController.handleGetCarById);
 router.put(
   '/update/:carId',

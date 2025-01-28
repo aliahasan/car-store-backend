@@ -1,11 +1,12 @@
 import { StatusCodes } from 'http-status-codes';
 import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../errors/AppError';
-import { ICar } from './car.interface';
+import { carSearchableFields } from './car.constant';
+import { TCar } from './car.interface';
 import Car from './car.model';
 
 // creating a  new car
-const createCar = async (carData: ICar) => {
+const createCar = async (carData: TCar) => {
   const car = new Car(carData);
   const result = await car.save();
   return result;
@@ -14,7 +15,7 @@ const createCar = async (carData: ICar) => {
 // get all the car services logic here
 const getAllCars = async (query: Record<string, unknown>) => {
   const carsQuery = new QueryBuilder(Car.find(), query)
-    .search([])
+    .search(carSearchableFields)
     .filter()
     .sort()
     .paginate()
@@ -37,13 +38,16 @@ const getCarById = async (carId: string) => {
 };
 
 // update  a specific car by its own id
-const updateCarById = async (carId: string, payload: Partial<ICar>) => {
+const updateCarById = async (carId: string, payload: Partial<TCar>) => {
   const car = await Car.findByIdAndUpdate(carId, payload, {
     new: true,
     runValidators: true,
   });
   if (!car) {
-    throw new Error('something went wrong. please try again');
+    throw new AppError(
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      'something went wrong. please try again'
+    );
   }
   return car;
 };
@@ -52,7 +56,7 @@ const updateCarById = async (carId: string, payload: Partial<ICar>) => {
 const deleteCarById = async (carId: string) => {
   const car = await Car.findByIdAndDelete(carId);
   if (!car) {
-    throw new Error('Car not found');
+    throw new AppError(StatusCodes.NOT_FOUND, 'Car not found');
   }
   return true;
 };
