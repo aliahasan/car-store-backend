@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import sendResponse from '../../utils/sendResponse';
 import tryCatchAsync from '../../utils/tryCatchAsync';
-import { authServices } from './auth.service';
+import { authServices } from './admin.service';
 
 const handleGetAllUser = tryCatchAsync(async (req, res) => {
   const result = await authServices.getAllUsers();
@@ -23,6 +23,7 @@ const handleUpdateUserStatus = tryCatchAsync(async (req, res) => {
     data: result,
   });
 });
+
 const handleUpdateUserRole = tryCatchAsync(async (req, res) => {
   const userId = req.params.userId;
   const updatedUserInfo = req.body;
@@ -50,7 +51,7 @@ const handleUpdateOrderStatus = tryCatchAsync(async (req, res) => {
   });
 });
 
-export const authControllers = {
+export const adminControllers = {
   handleGetAllUser,
   handleUpdateUserRole,
   handleUpdateUserStatus,

@@ -34,6 +34,17 @@ const handleLoginUser = tryCatchAsync(async (req, res) => {
   });
 });
 
+const handleChangePassword = tryCatchAsync(async (req, res) => {
+  const { ...passwordData } = req.body;
+  const result = await userServices.changePassword(req.user, passwordData);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Password is updated successfully!',
+    data: result,
+  });
+});
+
 const handleLogOutUser = tryCatchAsync(async (req, res) => {
   await userServices.logoutUser(req, res);
   res.status(200).json({
@@ -47,4 +58,5 @@ export const userControllers = {
   handleRegisterUser,
   handleLoginUser,
   handleLogOutUser,
+  handleChangePassword,
 };

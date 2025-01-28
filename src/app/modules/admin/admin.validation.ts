@@ -17,7 +17,7 @@ const updateOrderSchema = z.object({
     required_error: 'order status  is required',
   }),
 });
-export const authValidations = {
+export const adminValidations = {
   updateUserSchema,
   updateRoleSchema,
   updateOrderSchema,
