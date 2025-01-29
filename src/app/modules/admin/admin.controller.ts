@@ -36,10 +36,25 @@ const handleUpdateUserRole = tryCatchAsync(async (req, res) => {
   });
 });
 
-const handleUpdateOrderStatus = tryCatchAsync(async (req, res) => {
+const handleUpdateDeliveryStatus = tryCatchAsync(async (req, res) => {
   const { orderId } = req.params;
   const updatedOrderInfo = req.body;
   const result = await authServices.updateOrderDeliveryStatus(
+    orderId,
+    updatedOrderInfo
+  );
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Order status updated successfully',
+    data: result,
+  });
+});
+
+const handleUpdateOrderStatus = tryCatchAsync(async (req, res) => {
+  const { orderId } = req.params;
+  const updatedOrderInfo = req.body;
+  const result = await authServices.updateOrderStatus(
     orderId,
     updatedOrderInfo
   );
@@ -67,5 +82,6 @@ export const adminControllers = {
   handleUpdateUserRole,
   handleUpdateUserStatus,
   handleUpdateOrderStatus,
+  handleUpdateDeliveryStatus,
   handleCancelOrder,
 };

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { StatusCodes } from 'http-status-codes';
 import AppError from '../../errors/AppError';
 import Car from '../car/car.model';
@@ -165,37 +164,39 @@ const cancelOrder = async (orderId: string) => {
       'Order already accepted ! you can not cancel it'
     );
   }
-  await Order.findByIdAndDelete(order._id);
+  await Order.findByIdAndDelete(order._id, {
+    runValidators: true,
+  });
   return 'Order deleted successfully';
-};
-
-const calculateTotalRevenue = async () => {
-  try {
-    const result = await Order.aggregate([
-      {
-        $group: {
-          _id: null,
-          totalRevenue: { $sum: '$totalPrice' },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          totalRevenue: 1,
-        },
-      },
-    ]);
-
-    return result[0]?.totalRevenue || 0;
-  } catch (error: any) {
-    throw new Error(error.message || 'Failed to calculate total revenue');
-  }
 };
 
 export const orderService = {
   placeOrder,
   getAllUsersOrders,
-  calculateTotalRevenue,
   verifyPayment,
   cancelOrder,
 };
+
+//
+// const calculateTotalRevenue = async () => {
+//    try {
+//      const result = await Order.aggregate([
+//        {
+//          $group: {
+//            _id: null,
+//            totalRevenue: { $sum: '$totalPrice' },
+//          },
+//        },
+//        {
+//          $project: {
+//            _id: 0,
+//            totalRevenue: 1,
+//          },
+//        },
+//      ]);
+
+//      return result[0]?.totalRevenue || 0;
+//    } catch (error: any) {
+//      throw new Error(error.message || 'Failed to calculate total revenue');
+//    }
+//  };

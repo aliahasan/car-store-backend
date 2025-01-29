@@ -7,12 +7,14 @@ import { adminValidations } from './admin.validation';
 const router = Router();
 
 router.get('/all-users', auth('admin'), adminControllers.handleGetAllUser);
+
 router.patch(
   '/change-status/:userId',
   auth('admin'),
   validateRequest(adminValidations.updateUserSchema),
   adminControllers.handleUpdateUserStatus
 );
+
 router.patch(
   '/update-role/:userId',
   auth('admin'),
@@ -23,16 +25,18 @@ router.patch(
 router.patch(
   '/update-order-status/:orderId',
   auth('admin'),
-  validateRequest(adminValidations.updateOrderStatus)
+  validateRequest(adminValidations.updateOrderStatus),
+  adminControllers.handleUpdateOrderStatus
 );
+
 router.patch(
   '/update-order-delivery-status/:orderId',
   auth('admin'),
   validateRequest(adminValidations.updateOrderDeliveryStatusSchema),
-  adminControllers.handleUpdateOrderStatus
+  adminControllers.handleUpdateDeliveryStatus
 );
 
-router.put(
+router.delete(
   '/delete-order/:orderId',
   auth('admin'),
   adminControllers.handleCancelOrder

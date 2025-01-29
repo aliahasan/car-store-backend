@@ -47,6 +47,23 @@ const changeRole = async (userId: string, payload: Partial<TUser>) => {
   return updateUser;
 };
 
+const updateOrderStatus = async (orderId: string, payload: Partial<TOrder>) => {
+  const order = await Order.findByIdAndUpdate(
+    orderId,
+    {
+      orderStatus: payload,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+  if (!order) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Order not found');
+  }
+  return order;
+};
+
 const updateOrderDeliveryStatus = async (
   orderId: string,
   payload: Partial<TOrder>
@@ -57,10 +74,13 @@ const updateOrderDeliveryStatus = async (
   if (!order) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Order not found');
   }
+  return order;
 };
 
 const cancelOrderByAdmin = async (orderId: string) => {
-  const order = await Order.findByIdAndDelete(orderId);
+  const order = await Order.findByIdAndDelete(orderId, {
+    runValidators: true,
+  });
   if (!order) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Order not found');
   }
@@ -68,9 +88,10 @@ const cancelOrderByAdmin = async (orderId: string) => {
 };
 
 export const authServices = {
+  getAllUsers,
   changeStatus,
   changeRole,
-  getAllUsers,
+  updateOrderStatus,
   updateOrderDeliveryStatus,
   cancelOrderByAdmin,
 };
