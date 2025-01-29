@@ -37,4 +37,4 @@ router.put(
   auth('admin'),
   adminControllers.handleCancelOrder
 );
-export const authRoutes = router;
+export const adminRoute = router;
