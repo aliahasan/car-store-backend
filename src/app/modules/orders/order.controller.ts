@@ -38,6 +38,17 @@ const handleGetAllUsersOrders = tryCatchAsync(async (req, res) => {
   });
 });
 
+const handleCancelOrder = tryCatchAsync(async (req, res) => {
+  const { orderId } = req.params;
+  const result = await orderService.cancelOrder(orderId);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Order cancelled successfully',
+    data: result,
+  });
+});
+
 const handleTotalRevenue = async (req: Request, res: Response) => {
   try {
     const totalRevenue = await orderService.calculateTotalRevenue();
@@ -62,4 +73,5 @@ export const orderController = {
   handleTotalRevenue,
   handleGetAllUsersOrders,
   verifyPayment,
+  handleCancelOrder,
 };

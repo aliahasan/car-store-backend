@@ -22,27 +22,50 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const orderSchema = new mongoose_1.Schema({
-    email: {
+    user: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true },
+    cars: [
+        {
+            car: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Car', required: true },
+            quantity: { type: Number, required: true },
+        },
+    ],
+    totalPrice: { type: Number, required: true },
+    status: {
         type: String,
+        enum: ['Pending', 'Paid', 'Shipped', 'Completed', 'Cancelled'],
+        default: 'Pending',
         required: true,
     },
-    car: {
-        type: String,
-        required: true,
-    },
-    quantity: {
-        type: Number,
-        required: true,
-    },
-    totalPrice: {
-        type: Number,
-        required: true,
+    transaction: {
+        id: String,
+        transactionStatus: String,
+        bank_status: String,
+        sp_code: String,
+        sp_message: String,
+        method: String,
+        date_time: String,
     },
 }, {
     timestamps: true,
 });
-const Order = mongoose_1.default.model('Orders', orderSchema);
+orderSchema.statics.isAuthenticated = function (id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const user = yield this.findOne({ user: id });
+        return !!user;
+    });
+};
+// Create the model
+const Order = mongoose_1.default.model('Order', orderSchema);
 exports.default = Order;

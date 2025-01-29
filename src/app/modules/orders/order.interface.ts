@@ -20,7 +20,9 @@ export type TOrder = {
     quantity: number;
   }[];
   totalPrice: number;
-  status: 'Pending' | 'Paid' | 'Shipped' | 'Completed' | 'Cancelled';
+  paymentStatus: 'pending' | 'paid' | 'cancelled' | 'failed';
+  deliveryStatus: 'pending' | 'processing' | 'shipped' | 'completed';
+  orderStatus: 'pending' | 'accept' | 'reject';
   transaction: {
     id: string;
     transactionStatus: string;

@@ -12,24 +12,36 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const dotenv_1 = __importDefault(require("dotenv"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const app_1 = __importDefault(require("./app"));
 const config_1 = __importDefault(require("./app/config"));
-dotenv_1.default.config();
-function server() {
+let server;
+function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             yield mongoose_1.default.connect(config_1.default.database_url);
-            console.log('Connected to MongoDB');
+            console.log('✅ Connected to MongoDB');
             app_1.default.listen(config_1.default.port, () => {
-                console.log(`Server is running on port ${config_1.default.port}`);
+                console.log(`🚀 Server is running on port ${config_1.default.port}`);
             });
         }
         catch (error) {
-            console.error('Error connecting to MongoDB:', error);
+            console.error('❌ Failed to start the application', error);
             process.exit(1);
         }
     });
 }
-server();
+main();
+process.on('unhandledRejection', (error) => {
+    console.log(`😈 unhandled Rejection is detected , shutting down ...`, error);
+    if (server) {
+        server.close(() => {
+            process.exit(1);
+        });
+    }
+    process.exit(1);
+});
+process.on('uncaughtException', (error) => {
+    console.log(`😈 uncaught Exception is detected , shutting down ...`, error);
+    process.exit(1);
+});

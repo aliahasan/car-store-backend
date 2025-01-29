@@ -8,74 +8,63 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CarServices = void 0;
-const car_model_1 = require("./car.model");
+const http_status_codes_1 = require("http-status-codes");
+const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
+const AppError_1 = __importDefault(require("../../errors/AppError"));
+const car_constant_1 = require("./car.constant");
+const car_model_1 = __importDefault(require("./car.model"));
 // creating a  new car
 const createCar = (carData) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const newCar = yield car_model_1.Car.create(carData);
-        return newCar;
-    }
-    catch (error) {
-        throw new Error(error.message || 'Failed to create the car');
-    }
+    const car = new car_model_1.default(carData);
+    const result = yield car.save();
+    return result;
 });
 // get all the car services logic here
-const getAllCars = (queryValue) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const query = {};
-        if (queryValue) {
-            const search = new RegExp(queryValue, 'i'); // converted to case insensitive string by regexp
-            query.$or = [{ brand: search }, { model: search }, { category: search }];
-        }
-        const cars = yield car_model_1.Car.find(query).sort({ createdAt: -1 });
-        return cars;
-    }
-    catch (error) {
-        throw new Error(error.message || 'Failed to retrieved all the cars');
-    }
+const getAllCars = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const carsQuery = new QueryBuilder_1.default(car_model_1.default.find(), query)
+        .search(car_constant_1.carSearchableFields)
+        .filter()
+        .sort()
+        .paginate()
+        .fields();
+    const meta = yield carsQuery.countTotal();
+    const result = yield carsQuery.queryModel;
+    return {
+        meta,
+        result,
+    };
 });
 // get a specific  car by its own id
-const getCarById = (_id) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const car = yield car_model_1.Car.findById(_id);
-        if (!car) {
-            throw new Error('Something went wrong! Invalid input');
-        }
-        return car;
+const getCarById = (carId) => __awaiter(void 0, void 0, void 0, function* () {
+    const car = yield car_model_1.default.findById(carId);
+    if (!car) {
+        throw new AppError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'car not found');
     }
-    catch (error) {
-        throw new Error(error);
-    }
+    return car;
 });
 // update  a specific car by its own id
-const updateCarById = (_id, updatedCarData) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const car = yield car_model_1.Car.findByIdAndUpdate(_id, updatedCarData, {
-            new: true,
-        });
-        if (!car) {
-            throw new Error('something went wrong. please try again');
-        }
-        return car;
+const updateCarById = (carId, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const car = yield car_model_1.default.findByIdAndUpdate(carId, payload, {
+        new: true,
+        runValidators: true,
+    });
+    if (!car) {
+        throw new AppError_1.default(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR, 'something went wrong. please try again');
     }
-    catch (error) {
-        throw new Error(error);
-    }
+    return car;
 });
 // delete  a specific car by its own id
-const deleteCarById = (_id) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const car = yield car_model_1.Car.findByIdAndDelete(_id);
-        if (!car) {
-            throw new Error('Car not found');
-        }
-        return car;
+const deleteCarById = (carId) => __awaiter(void 0, void 0, void 0, function* () {
+    const car = yield car_model_1.default.findByIdAndDelete(carId);
+    if (!car) {
+        throw new AppError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'Car not found');
     }
-    catch (error) {
-        throw new Error(error.message || 'Failed to delete the car');
-    }
+    return true;
 });
 exports.CarServices = {
     createCar,

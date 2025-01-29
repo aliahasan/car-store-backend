@@ -17,4 +17,11 @@ router.get(
   auth('user'),
   orderController.handleGetAllUsersOrders
 );
+
+router.delete(
+  '/cancel-order/:orderId',
+  auth('user'),
+  orderController.handleCancelOrder
+);
+
 export const orderRoutes = router;

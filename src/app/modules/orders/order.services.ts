@@ -45,7 +45,7 @@ const placeOrder = async (
   );
 
   let order = await Order.create({
-    user,
+    user: userId,
     cars: carDetails,
     totalPrice,
   });
@@ -71,7 +71,6 @@ const placeOrder = async (
       },
     });
   }
-
   return payment.checkout_url;
 };
 
@@ -79,14 +78,12 @@ const placeOrder = async (
 const verifyPayment = async (order_id: string) => {
   const session = await Order.startSession();
   session.startTransaction();
-
   try {
     const verifyOrderPayment = await orderUtils.verifyPaymentAsync(order_id);
     if (verifyOrderPayment.length) {
       const bankStatus = verifyOrderPayment[0].bank_status;
 
-      if (bankStatus === 'Cancel' || bankStatus === 'Failed') {
-        // Delete the order within the transaction
+      if (bankStatus === 'Cancel') {
         await Order.findOneAndDelete(
           { 'transaction.id': order_id },
           { session }
@@ -103,21 +100,25 @@ const verifyPayment = async (order_id: string) => {
               verifyOrderPayment[0].transaction_status,
             'transaction.method': verifyOrderPayment[0].method,
             'transaction.date_time': verifyOrderPayment[0].date_time,
-            status:
+            paymentStatus:
               bankStatus === 'Success'
-                ? 'Paid'
+                ? 'paid'
                 : bankStatus === 'Failed'
-                  ? 'Failed'
+                  ? 'failed'
                   : bankStatus === 'Cancel'
-                    ? 'Canceled'
-                    : 'Pending',
+                    ? 'cancelled'
+                    : 'pending',
+            deliveryStatus: bankStatus === 'Success' && 'pending',
+            orderStatus: bankStatus === 'Success' && 'pending',
           },
           { new: true, session }
         );
 
-        if (bankStatus === 'Success' && updatedOrder) {
+        if (
+          bankStatus === 'Success' &&
+          updatedOrder?.paymentStatus === 'paid'
+        ) {
           const carDetails = updatedOrder.cars;
-
           if (Array.isArray(carDetails)) {
             for (const car of carDetails) {
               const carId = car.car;
@@ -125,7 +126,7 @@ const verifyPayment = async (order_id: string) => {
               await Car.findByIdAndUpdate(
                 carId,
                 { $inc: { quantity: -reduceQuantity } },
-                { new: true, session } // Include session
+                { new: true, session }
               );
             }
           }
@@ -151,6 +152,21 @@ const getAllUsersOrders = async (userId: string) => {
     throw new AppError(StatusCodes.NOT_FOUND, 'No orders found');
   }
   return result;
+};
+
+const cancelOrder = async (orderId: string) => {
+  const order = await Order.findById(orderId);
+  if (!order) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Order not found');
+  }
+  if (order.orderStatus === 'accept') {
+    throw new AppError(
+      StatusCodes.FORBIDDEN,
+      'Order already accepted ! you can not cancel it'
+    );
+  }
+  await Order.findByIdAndDelete(order._id);
+  return 'Order deleted successfully';
 };
 
 const calculateTotalRevenue = async () => {
@@ -181,4 +197,5 @@ export const orderService = {
   getAllUsersOrders,
   calculateTotalRevenue,
   verifyPayment,
+  cancelOrder,
 };

@@ -23,7 +23,18 @@ router.patch(
 router.patch(
   '/update-order-status/:orderId',
   auth('admin'),
-  validateRequest(adminValidations.updateOrderSchema),
+  validateRequest(adminValidations.updateOrderStatus)
+);
+router.patch(
+  '/update-order-delivery-status/:orderId',
+  auth('admin'),
+  validateRequest(adminValidations.updateOrderDeliveryStatusSchema),
   adminControllers.handleUpdateOrderStatus
+);
+
+router.put(
+  '/delete-order/:orderId',
+  auth('admin'),
+  adminControllers.handleCancelOrder
 );
 export const authRoutes = router;

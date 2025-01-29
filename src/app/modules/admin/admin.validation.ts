@@ -12,13 +12,19 @@ const updateRoleSchema = z.object({
     required_error: 'update info is required',
   }),
 });
-const updateOrderSchema = z.object({
-  status: z.string({
+const updateOrderDeliveryStatusSchema = z.object({
+  deliveryStatus: z.string({
+    required_error: 'delivery status  is required',
+  }),
+});
+const updateOrderStatus = z.object({
+  orderStatus: z.string({
     required_error: 'order status  is required',
   }),
 });
 export const adminValidations = {
   updateUserSchema,
   updateRoleSchema,
-  updateOrderSchema,
+  updateOrderStatus,
+  updateOrderDeliveryStatusSchema,
 };

@@ -22,80 +22,125 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Car = void 0;
+const http_status_codes_1 = require("http-status-codes");
 const mongoose_1 = __importStar(require("mongoose"));
+const AppError_1 = __importDefault(require("../../errors/AppError"));
 const carSchema = new mongoose_1.Schema({
+    name: {
+        type: String,
+        required: true,
+        trim: true,
+    },
     brand: {
         type: String,
-        required: [
-            true,
-            'The brand name is required. Please provide a valid car brand.',
-        ],
+        required: true,
+        trim: true,
     },
     model: {
         type: String,
-        required: [
-            true,
-            'The model name is required. Please specify the car model.',
-        ],
+        required: true,
+        trim: true,
     },
     year: {
         type: Number,
-        required: [
-            true,
-            'The manufacturing year is required. Please provide a valid year.',
-        ],
-        min: [
-            1886,
-            'The year must be 1886 or later, the year of the first car invention.',
-        ],
-        max: [
-            new Date().getFullYear(),
-            'The year cannot exceed the current year.',
-        ],
-    },
-    category: {
-        type: String,
-        enum: {
-            values: ['Sedan', 'SUV', 'Truck', 'Coupe', 'Convertible'],
-            message: '{VALUE} is not a valid category. Category must be one of the following: Sedan, SUV, Truck, Coupe, or Convertible.',
-        },
-        required: [
-            true,
-            'The car category is required. Please select a valid category.',
-        ],
-    },
-    description: {
-        type: String,
-        required: [true, 'A brief description of the car is required.'],
-        maxlength: [300, 'The description should not exceed 300 characters.'],
-    },
-    quantity: {
-        type: Number,
-        required: [
-            true,
-            'The quantity is required. Please specify how many cars are available.',
-        ],
-    },
-    inStock: {
-        type: Boolean,
-        default: true,
-        required: [
-            true,
-            'The stock status is required. Please specify if the car is in stock.',
-        ],
+        required: true,
+        min: 1886,
     },
     price: {
         type: Number,
-        required: [true, 'The price is required. Please specify the car price.'],
-        min: [1, 'The price must be at least $1.'],
-        validate: {
-            validator: (value) => value > 0,
-            message: 'The price must be a positive number.',
-        },
+        required: true,
+        min: 1,
+    },
+    category: {
+        type: String,
+        enum: ['Sedan', 'SUV', 'Truck', 'Coupe', 'Convertible', 'Van', 'Other'],
+        required: true,
+    },
+    description: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    quantity: {
+        type: Number,
+        required: true,
+        min: 1,
+    },
+    color: {
+        type: [String],
+        required: true,
+    },
+    mileage: {
+        type: Number,
+        required: true,
+        min: 1,
+    },
+    fuelType: {
+        type: String,
+        enum: ['Petrol', 'Diesel', 'Electric', 'Hybrid'],
+        required: true,
+    },
+    transmission: {
+        type: String,
+        enum: ['Manual', 'Automatic'],
+        required: true,
+    },
+    engineCapacity: {
+        type: Number,
+        required: true,
+        min: 0,
+    },
+    seatingCapacity: {
+        type: Number,
+        required: true,
+        min: 1,
+    },
+    features: {
+        type: [String],
+        required: true,
+    },
+    rating: {
+        type: Number,
+        min: 0,
+        max: 5,
+    },
+    images: {
+        type: [String],
+        required: true,
+    },
+    warranty: {
+        type: String,
+        required: true,
+        default: '2 year',
+    },
+    isStock: {
+        type: Boolean,
+        default: true,
     },
 }, {
-    timestamps: true, // Adds createdAt and updatedAt fields automatically
+    timestamps: true,
 });
-exports.Car = mongoose_1.default.model('Car', carSchema);
+carSchema.statics.isCarExist = function (carId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const car = yield this.findById(carId);
+        if (!car) {
+            throw new AppError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'Car not found');
+        }
+        return car;
+    });
+};
+const Car = mongoose_1.default.model('Car', carSchema);
+exports.default = Car;

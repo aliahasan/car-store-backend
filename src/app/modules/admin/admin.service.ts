@@ -14,10 +14,16 @@ const getAllUsers = async () => {
 };
 
 const changeStatus = async (userId: string, payload: Partial<TUser>) => {
-  const blockedUser = await User.findByIdAndUpdate(userId, payload, {
-    new: true,
-    runValidators: true,
-  }).select('-password');
+  const blockedUser = await User.findByIdAndUpdate(
+    userId,
+    {
+      isBlocked: payload,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  ).select('-password');
   if (!blockedUser) {
     throw new AppError(StatusCodes.NOT_FOUND, 'User not found');
   }
@@ -25,30 +31,46 @@ const changeStatus = async (userId: string, payload: Partial<TUser>) => {
 };
 
 const changeRole = async (userId: string, payload: Partial<TUser>) => {
-  const updateUser = await User.findByIdAndUpdate(userId, payload, {
-    new: true,
-    runValidators: true,
-  }).select('-password');
+  const updateUser = await User.findByIdAndUpdate(
+    userId,
+    {
+      role: payload,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  ).select('-password');
   if (!updateUser) {
     throw new AppError(StatusCodes.NOT_FOUND, 'User not found');
   }
   return updateUser;
 };
 
-const updateOrderStatus = async (orderId: string, payload: TOrder) => {
-  const order = await Order.findByIdAndUpdate(orderId, payload, {
-    new: true,
-    runValidators: true,
+const updateOrderDeliveryStatus = async (
+  orderId: string,
+  payload: Partial<TOrder>
+) => {
+  const order = await Order.findByIdAndUpdate(orderId, {
+    deliveryStatus: payload,
   });
   if (!order) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Order not found');
   }
-  return order;
+};
+
+const cancelOrderByAdmin = async (orderId: string) => {
+  const order = await Order.findByIdAndDelete(orderId);
+  if (!order) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Order not found');
+  }
+  return 'order deleted';
 };
 
 export const authServices = {
   changeStatus,
   changeRole,
   getAllUsers,
-  updateOrderStatus,
+  updateOrderDeliveryStatus,
+  cancelOrderByAdmin,
 };
