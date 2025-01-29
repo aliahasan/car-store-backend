@@ -14,7 +14,7 @@ const updateRoleSchema = z.object({
 });
 const updateOrderDeliveryStatusSchema = z.object({
   deliveryStatus: z.string({
-    required_error: 'delivery status  is required',
+    required_error: ' status  is required',
   }),
 });
 const updateOrderStatus = z.object({

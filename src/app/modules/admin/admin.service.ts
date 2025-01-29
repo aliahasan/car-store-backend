@@ -17,7 +17,7 @@ const changeStatus = async (userId: string, payload: Partial<TUser>) => {
   const blockedUser = await User.findByIdAndUpdate(
     userId,
     {
-      isBlocked: payload,
+      isBlocked: payload.isBlocked,
     },
     {
       new: true,
@@ -34,7 +34,7 @@ const changeRole = async (userId: string, payload: Partial<TUser>) => {
   const updateUser = await User.findByIdAndUpdate(
     userId,
     {
-      role: payload,
+      role: payload.role,
     },
     {
       new: true,
@@ -51,7 +51,7 @@ const updateOrderStatus = async (orderId: string, payload: Partial<TOrder>) => {
   const order = await Order.findByIdAndUpdate(
     orderId,
     {
-      orderStatus: payload,
+      orderStatus: payload.orderStatus,
     },
     {
       new: true,
@@ -69,7 +69,7 @@ const updateOrderDeliveryStatus = async (
   payload: Partial<TOrder>
 ) => {
   const order = await Order.findByIdAndUpdate(orderId, {
-    deliveryStatus: payload,
+    deliveryStatus: payload.deliveryStatus,
   });
   if (!order) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Order not found');
