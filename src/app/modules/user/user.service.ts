@@ -8,6 +8,7 @@ import { StringValue } from '../../global/types';
 import { TUser } from './user.interface';
 import User from './user.model';
 import { generateToken } from './user.utils';
+
 const createUser = async (userData: TUser) => {
   const user = new User(userData);
   const result = await user.save();
@@ -28,7 +29,7 @@ const loginUser = async (payload: Payload) => {
     user?.password
   );
   if (!checkedPassword) {
-    throw new AppError(StatusCodes.UNAUTHORIZED, 'Invalid credentials');
+    throw new AppError(StatusCodes.NOT_FOUND, 'Invalid credentials');
   }
   const jwtPayload = {
     role: user?.role,
