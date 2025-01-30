@@ -10,6 +10,13 @@ import User from './user.model';
 import { generateToken } from './user.utils';
 
 const createUser = async (userData: TUser) => {
+  const { email } = userData;
+  if (await User.findOne({ email })) {
+    throw new AppError(
+      StatusCodes.CONFLICT,
+      'user is already exist with this email'
+    );
+  }
   const user = new User(userData);
   const result = await user.save();
   return result;
