@@ -47,6 +47,16 @@ const handleGetAllUsersOrders = (0, tryCatchAsync_1.default)((req, res) => __awa
         data: result,
     });
 }));
+const handleCancelOrder = (0, tryCatchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { orderId } = req.params;
+    const result = yield order_services_1.orderService.cancelOrder(orderId);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_codes_1.StatusCodes.OK,
+        message: 'Order cancelled successfully',
+        data: result,
+    });
+}));
 const handleTotalRevenue = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const totalRevenue = yield order_services_1.orderService.calculateTotalRevenue();
@@ -71,4 +81,5 @@ exports.orderController = {
     handleTotalRevenue,
     handleGetAllUsersOrders,
     verifyPayment,
+    handleCancelOrder,
 };

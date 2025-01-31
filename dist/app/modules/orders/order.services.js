@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.orderService = void 0;
-/* eslint-disable @typescript-eslint/no-explicit-any */
 const http_status_codes_1 = require("http-status-codes");
 const AppError_1 = __importDefault(require("../../errors/AppError"));
 const car_model_1 = __importDefault(require("../car/car.model"));
@@ -47,7 +46,7 @@ const placeOrder = (userId, payload, client_ip) => __awaiter(void 0, void 0, voi
         return item;
     })));
     let order = yield order_model_1.default.create({
-        user,
+        user: userId,
         cars: carDetails,
         totalPrice,
     });
@@ -83,8 +82,7 @@ const verifyPayment = (order_id) => __awaiter(void 0, void 0, void 0, function* 
         const verifyOrderPayment = yield order_utils_1.orderUtils.verifyPaymentAsync(order_id);
         if (verifyOrderPayment.length) {
             const bankStatus = verifyOrderPayment[0].bank_status;
-            if (bankStatus === 'Cancel' || bankStatus === 'Failed') {
-                // Delete the order within the transaction
+            if (bankStatus === 'Cancel') {
                 yield order_model_1.default.findOneAndDelete({ 'transaction.id': order_id }, { session });
             }
             else {
@@ -96,22 +94,24 @@ const verifyPayment = (order_id) => __awaiter(void 0, void 0, void 0, function* 
                     'transaction.transactionStatus': verifyOrderPayment[0].transaction_status,
                     'transaction.method': verifyOrderPayment[0].method,
                     'transaction.date_time': verifyOrderPayment[0].date_time,
-                    status: bankStatus === 'Success'
-                        ? 'Paid'
+                    paymentStatus: bankStatus === 'Success'
+                        ? 'paid'
                         : bankStatus === 'Failed'
-                            ? 'Failed'
+                            ? 'failed'
                             : bankStatus === 'Cancel'
-                                ? 'Canceled'
-                                : 'Pending',
+                                ? 'cancelled'
+                                : 'pending',
+                    deliveryStatus: bankStatus === 'Success' && 'pending',
+                    orderStatus: bankStatus === 'Success' && 'pending',
                 }, { new: true, session });
-                if (bankStatus === 'Success' && updatedOrder) {
+                if (bankStatus === 'Success' &&
+                    (updatedOrder === null || updatedOrder === void 0 ? void 0 : updatedOrder.paymentStatus) === 'paid') {
                     const carDetails = updatedOrder.cars;
                     if (Array.isArray(carDetails)) {
                         for (const car of carDetails) {
                             const carId = car.car;
                             const reduceQuantity = car.quantity;
-                            yield car_model_1.default.findByIdAndUpdate(carId, { $inc: { quantity: -reduceQuantity } }, { new: true, session } // Include session
-                            );
+                            yield car_model_1.default.findByIdAndUpdate(carId, { $inc: { quantity: -reduceQuantity } }, { new: true, session });
                         }
                     }
                 }
@@ -138,32 +138,44 @@ const getAllUsersOrders = (userId) => __awaiter(void 0, void 0, void 0, function
     }
     return result;
 });
-const calculateTotalRevenue = () => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    try {
-        const result = yield order_model_1.default.aggregate([
-            {
-                $group: {
-                    _id: null,
-                    totalRevenue: { $sum: '$totalPrice' },
-                },
-            },
-            {
-                $project: {
-                    _id: 0,
-                    totalRevenue: 1,
-                },
-            },
-        ]);
-        return ((_a = result[0]) === null || _a === void 0 ? void 0 : _a.totalRevenue) || 0;
+const cancelOrder = (orderId) => __awaiter(void 0, void 0, void 0, function* () {
+    const order = yield order_model_1.default.findById(orderId);
+    if (!order) {
+        throw new AppError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'Order not found');
     }
-    catch (error) {
-        throw new Error(error.message || 'Failed to calculate total revenue');
+    if (order.orderStatus === 'accept') {
+        throw new AppError_1.default(http_status_codes_1.StatusCodes.FORBIDDEN, 'Order already accepted ! you can not cancel it');
     }
+    yield order_model_1.default.findByIdAndDelete(order._id, {
+        runValidators: true,
+    });
+    return 'Order deleted successfully';
 });
 exports.orderService = {
     placeOrder,
     getAllUsersOrders,
-    calculateTotalRevenue,
     verifyPayment,
+    cancelOrder,
 };
+//
+// const calculateTotalRevenue = async () => {
+//    try {
+//      const result = await Order.aggregate([
+//        {
+//          $group: {
+//            _id: null,
+//            totalRevenue: { $sum: '$totalPrice' },
+//          },
+//        },
+//        {
+//          $project: {
+//            _id: 0,
+//            totalRevenue: 1,
+//          },
+//        },
+//      ]);
+//      return result[0]?.totalRevenue || 0;
+//    } catch (error: any) {
+//      throw new Error(error.message || 'Failed to calculate total revenue');
+//    }
+//  };

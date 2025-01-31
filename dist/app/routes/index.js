@@ -21,7 +21,7 @@ const appRoutes = [
     },
     {
         path: '/auth',
-        route: admin_route_1.authRoutes,
+        route: admin_route_1.adminRoute,
     },
 ];
 appRoutes.forEach((route) => {

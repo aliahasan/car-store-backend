@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import sendResponse from '../../utils/sendResponse';
 import tryCatchAsync from '../../utils/tryCatchAsync';
@@ -49,28 +47,9 @@ const handleCancelOrder = tryCatchAsync(async (req, res) => {
   });
 });
 
-const handleTotalRevenue = async (req: Request, res: Response) => {
-  try {
-    const totalRevenue = await orderService.calculateTotalRevenue();
-    res.status(200).json({
-      success: true,
-      message: ' Revenue calculated successfully',
-      data: {
-        totalRevenue,
-      },
-    });
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      error: 'Failed to calculate total revenue',
-    });
-  }
-};
-
 export const orderController = {
   handlePlaceOrder,
-  handleTotalRevenue,
+
   handleGetAllUsersOrders,
   verifyPayment,
   handleCancelOrder,

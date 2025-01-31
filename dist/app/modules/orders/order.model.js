@@ -42,10 +42,20 @@ const orderSchema = new mongoose_1.Schema({
         },
     ],
     totalPrice: { type: Number, required: true },
-    status: {
+    paymentStatus: {
         type: String,
-        enum: ['Pending', 'Paid', 'Shipped', 'Completed', 'Cancelled'],
-        default: 'Pending',
+        enum: ['pending', 'paid', 'cancelled', 'failed'],
+        default: 'pending',
+        required: true,
+    },
+    deliveryStatus: {
+        type: String,
+        enum: ['pending', 'processing', 'shipped', 'completed'],
+    },
+    orderStatus: {
+        type: String,
+        enum: ['pending', 'accept', 'reject'],
+        default: 'pending',
         required: true,
     },
     transaction: {

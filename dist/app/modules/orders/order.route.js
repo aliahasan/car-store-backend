@@ -13,4 +13,5 @@ const router = express_1.default.Router();
 router.get('/verify', (0, auth_1.default)('user'), order_controller_1.orderController.verifyPayment);
 router.post('/create-order', (0, auth_1.default)('user'), (0, validateRequest_1.default)(order_validation_1.orderValidations.orderValidationSchema), order_controller_1.orderController.handlePlaceOrder);
 router.get('/get-my-orders', (0, auth_1.default)('user'), order_controller_1.orderController.handleGetAllUsersOrders);
+router.delete('/cancel-order/:orderId', (0, auth_1.default)('user'), order_controller_1.orderController.handleCancelOrder);
 exports.orderRoutes = router;
