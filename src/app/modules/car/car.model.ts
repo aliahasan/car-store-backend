@@ -32,7 +32,7 @@ const carSchema = new Schema<TCar, CarMOdel>(
     },
     category: {
       type: String,
-      enum: ['Sedan', 'SUV', 'Truck', 'Coupe', 'Convertible', 'Van', 'Other'],
+      enum: ['Sedan', 'SUV', 'Truck', 'Coupe', 'Convertible', 'Van'],
       required: true,
     },
     description: {

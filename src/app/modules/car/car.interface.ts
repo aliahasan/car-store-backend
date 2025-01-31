@@ -6,14 +6,7 @@ export interface TCar {
   model: string;
   year: number;
   price: number;
-  category:
-    | 'Sedan'
-    | 'SUV'
-    | 'Truck'
-    | 'Coupe'
-    | 'Convertible'
-    | 'Van'
-    | 'Other';
+  category: 'Sedan' | 'SUV' | 'Truck' | 'Coupe' | 'Convertible' | 'Van';
   description: string;
   quantity: number;
   color: string[];

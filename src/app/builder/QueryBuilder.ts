@@ -27,17 +27,27 @@ class QueryBuilder<T> {
 
   filter() {
     const queryObj = { ...this.query };
-    const excludeFields = ['searchTerm', 'sort', 'limit', 'page', 'fields'];
+    const excludeFields = [
+      'searchTerm',
+      'sortOrder',
+      'sortBy',
+      'limit',
+      'page',
+      'fields',
+    ];
     excludeFields.forEach((el) => delete queryObj[el]);
     this.queryModel = this.queryModel.find(queryObj as FilterQuery<T>);
     return this;
   }
 
   sort() {
-    const sort = this.query?.sort
-      ? (this.query.sort as string).split(',').join(' ')
-      : 'createdAt'; // Default to '-createdAt' if no sort query is provided
-    this.queryModel = this.queryModel.sort(sort as string);
+    let sortStr;
+    if (this?.query?.sortBy && this?.query?.sortOrder) {
+      const sortBy = this?.query?.sortBy;
+      const sortOrder = this?.query?.sortOrder;
+      sortStr = `${sortOrder === 'desc' ? '-' : ''}${sortBy}`;
+    }
+    this.queryModel = this.queryModel.sort(sortStr);
     return this;
   }
 
