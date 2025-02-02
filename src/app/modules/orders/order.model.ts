@@ -4,6 +4,10 @@ import { TOrder, TOrderModel } from './order.interface';
 const orderSchema = new Schema<TOrder, TOrderModel>(
   {
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    email: {
+      type: String,
+      required: true,
+    },
     cars: [
       {
         car: { type: Schema.Types.ObjectId, ref: 'Car', required: true },

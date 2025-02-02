@@ -18,10 +18,6 @@ router.get(
   orderController.handleGetAllUsersOrders
 );
 
-router.delete(
-  '/cancel-order/:orderId',
-  auth('user'),
-  orderController.handleCancelOrder
-);
+router.delete('/cancel-order', auth('user'), orderController.handleCancelOrder);
 
 export const orderRoutes = router;

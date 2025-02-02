@@ -15,6 +15,7 @@ import { Model, Types } from 'mongoose';
 
 export type TOrder = {
   user: Types.ObjectId;
+  email: string;
   cars: {
     car: Types.ObjectId;
     quantity: number;

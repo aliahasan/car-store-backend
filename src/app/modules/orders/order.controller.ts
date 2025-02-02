@@ -26,8 +26,8 @@ const verifyPayment = tryCatchAsync(async (req, res) => {
 });
 
 const handleGetAllUsersOrders = tryCatchAsync(async (req, res) => {
-  const { userId } = req.user;
-  const result = await orderService.getAllUsersOrders(userId);
+  const { email } = req.query;
+  const result = await orderService.getAllUsersOrders(email as string);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
@@ -37,8 +37,8 @@ const handleGetAllUsersOrders = tryCatchAsync(async (req, res) => {
 });
 
 const handleCancelOrder = tryCatchAsync(async (req, res) => {
-  const { orderId } = req.params;
-  const result = await orderService.cancelOrder(orderId);
+  const { orderId } = req.query;
+  const result = await orderService.cancelOrder(orderId as string);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
@@ -49,7 +49,6 @@ const handleCancelOrder = tryCatchAsync(async (req, res) => {
 
 export const orderController = {
   handlePlaceOrder,
-
   handleGetAllUsersOrders,
   verifyPayment,
   handleCancelOrder,

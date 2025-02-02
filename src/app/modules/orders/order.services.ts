@@ -45,6 +45,7 @@ const placeOrder = async (
 
   let order = await Order.create({
     user: userId,
+    email: user?.email,
     cars: carDetails,
     totalPrice,
   });
@@ -143,8 +144,8 @@ const verifyPayment = async (order_id: string) => {
 };
 
 // calculate the total revenue by aggregation pipeline
-const getAllUsersOrders = async (userId: string) => {
-  const result = await Order.find({ user: userId }).populate(
+const getAllUsersOrders = async (email: string) => {
+  const result = await Order.find({ email: email }).populate(
     'cars.car',
     'name , images'
   );
@@ -155,19 +156,18 @@ const getAllUsersOrders = async (userId: string) => {
 };
 
 const cancelOrder = async (orderId: string) => {
-  const order = await Order.findById(orderId);
+  const order = await Order.findOne({ _id: orderId });
   if (!order) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Order not found');
   }
-  if (order.orderStatus === 'accept') {
+  //accepted
+  if (order.orderStatus === 'accepted') {
     throw new AppError(
       StatusCodes.FORBIDDEN,
       'Order already accepted ! you can not cancel it'
     );
   }
-  await Order.findByIdAndDelete(order._id, {
-    runValidators: true,
-  });
+  await Order.deleteOne(order?._id);
   return 'Order deleted successfully';
 };
 
