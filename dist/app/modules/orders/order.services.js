@@ -130,9 +130,7 @@ const verifyPayment = (order_id) => __awaiter(void 0, void 0, void 0, function* 
 });
 // calculate the total revenue by aggregation pipeline
 const getAllUsersOrders = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield order_model_1.default.find({ user: userId }).populate({
-        path: 'cars.car',
-    });
+    const result = yield order_model_1.default.find({ user: userId }).populate('cars.car', 'name , images');
     if (!result || result.length === 0) {
         throw new AppError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'No orders found');
     }

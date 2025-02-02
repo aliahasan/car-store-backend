@@ -20,7 +20,7 @@ const appRoutes = [
         route: order_route_1.orderRoutes,
     },
     {
-        path: '/auth',
+        path: '/admin',
         route: admin_route_1.adminRoute,
     },
 ];

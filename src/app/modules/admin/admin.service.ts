@@ -58,7 +58,14 @@ const changeRole = async (userId: string, payload: Partial<TUser>) => {
 };
 
 const updateOrderStatus = async (orderId: string, payload: Partial<TOrder>) => {
-  const order = await Order.findByIdAndUpdate(
+  const order = await Order.findById(orderId);
+  if (order?.paymentStatus !== 'paid') {
+    throw new AppError(
+      StatusCodes.FORBIDDEN,
+      `Payment is ${order?.paymentStatus}.you can not update status`
+    );
+  }
+  const updateOrder = await Order.findByIdAndUpdate(
     orderId,
     {
       orderStatus: payload.orderStatus,
@@ -68,10 +75,10 @@ const updateOrderStatus = async (orderId: string, payload: Partial<TOrder>) => {
       runValidators: true,
     }
   );
-  if (!order) {
+  if (!updateOrder) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Order not found');
   }
-  return order;
+  return updateOrder;
 };
 
 const updateOrderDeliveryStatus = async (

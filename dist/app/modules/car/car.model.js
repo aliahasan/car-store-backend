@@ -55,9 +55,8 @@ const carSchema = new mongoose_1.Schema({
         trim: true,
     },
     year: {
-        type: Number,
+        type: String,
         required: true,
-        min: 1886,
     },
     price: {
         type: Number,
