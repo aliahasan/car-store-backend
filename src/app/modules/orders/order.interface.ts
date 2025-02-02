@@ -22,7 +22,7 @@ export type TOrder = {
   totalPrice: number;
   paymentStatus: 'pending' | 'paid' | 'cancelled' | 'failed';
   deliveryStatus: 'pending' | 'processing' | 'shipped' | 'completed';
-  orderStatus: 'pending' | 'accept' | 'reject';
+  orderStatus: 'pending' | 'accepted' | 'reject';
   transaction: {
     id: string;
     transactionStatus: string;

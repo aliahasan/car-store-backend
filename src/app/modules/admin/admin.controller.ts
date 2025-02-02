@@ -12,19 +12,9 @@ const handleGetAllUser = tryCatchAsync(async (req, res) => {
   });
 });
 
-const handleGetAllOrders = tryCatchAsync(async (req, res) => {
-  const result = await authServices.getAllOrders();
-  sendResponse(res, {
-    success: true,
-    statusCode: StatusCodes.OK,
-    data: result,
-  });
-});
-
 const handleUpdateUserStatus = tryCatchAsync(async (req, res) => {
-  const userId = req.params.userId;
   const updatedUserInfo = req.body;
-  const result = await authServices.changeStatus(userId, updatedUserInfo);
+  const result = await authServices.changeStatus(updatedUserInfo);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
@@ -45,6 +35,15 @@ const handleUpdateUserRole = tryCatchAsync(async (req, res) => {
   });
 });
 
+const handleGetAllOrders = tryCatchAsync(async (req, res) => {
+  const result = await authServices.getAllOrders();
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    data: result,
+  });
+});
+
 const handleUpdateDeliveryStatus = tryCatchAsync(async (req, res) => {
   const { orderId } = req.params;
   const updatedOrderInfo = req.body;
@@ -61,12 +60,8 @@ const handleUpdateDeliveryStatus = tryCatchAsync(async (req, res) => {
 });
 
 const handleUpdateOrderStatus = tryCatchAsync(async (req, res) => {
-  const { orderId } = req.params;
   const updatedOrderInfo = req.body;
-  const result = await authServices.updateOrderStatus(
-    orderId,
-    updatedOrderInfo
-  );
+  const result = await authServices.updateOrderStatus(updatedOrderInfo);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,

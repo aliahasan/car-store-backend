@@ -11,21 +11,21 @@ router.get('/all-users', auth('admin'), adminControllers.handleGetAllUser);
 router.get('/all-orders', auth('admin'), adminControllers.handleGetAllOrders);
 
 router.patch(
-  '/change-status/:userId',
+  '/change-status',
   auth('admin'),
   validateRequest(adminValidations.updateUserSchema),
   adminControllers.handleUpdateUserStatus
 );
 
 router.patch(
-  '/update-role/:userId',
+  '/update-role',
   auth('admin'),
   validateRequest(adminValidations.updateRoleSchema),
   adminControllers.handleUpdateUserRole
 );
 
 router.patch(
-  '/update-order-status/:orderId',
+  '/update-order-status',
   auth('admin'),
   validateRequest(adminValidations.updateOrderStatus),
   adminControllers.handleUpdateOrderStatus

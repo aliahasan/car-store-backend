@@ -23,7 +23,7 @@ const orderSchema = new Schema<TOrder, TOrderModel>(
     },
     orderStatus: {
       type: String,
-      enum: ['pending', 'accept', 'reject'],
+      enum: ['pending', 'accepted', 'reject'],
       default: 'pending',
       required: true,
     },
