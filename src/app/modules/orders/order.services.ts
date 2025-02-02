@@ -144,9 +144,10 @@ const verifyPayment = async (order_id: string) => {
 
 // calculate the total revenue by aggregation pipeline
 const getAllUsersOrders = async (userId: string) => {
-  const result = await Order.find({ user: userId }).populate({
-    path: 'cars.car',
-  });
+  const result = await Order.find({ user: userId }).populate(
+    'cars.car',
+    'name , images'
+  );
   if (!result || result.length === 0) {
     throw new AppError(StatusCodes.NOT_FOUND, 'No orders found');
   }

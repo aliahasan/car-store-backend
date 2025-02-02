@@ -20,6 +20,7 @@ router.put(
   validateRequest(carValidations.updateCarValidationSchema),
   CarController.handleUpdateCarById
 );
+
 router.delete(
   '/delete/:carId',
   auth('admin'),

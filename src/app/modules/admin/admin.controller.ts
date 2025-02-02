@@ -12,6 +12,15 @@ const handleGetAllUser = tryCatchAsync(async (req, res) => {
   });
 });
 
+const handleGetAllOrders = tryCatchAsync(async (req, res) => {
+  const result = await authServices.getAllOrders();
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    data: result,
+  });
+});
+
 const handleUpdateUserStatus = tryCatchAsync(async (req, res) => {
   const userId = req.params.userId;
   const updatedUserInfo = req.body;
@@ -79,6 +88,7 @@ const handleCancelOrder = tryCatchAsync(async (req, res) => {
 
 export const adminControllers = {
   handleGetAllUser,
+  handleGetAllOrders,
   handleUpdateUserRole,
   handleUpdateUserStatus,
   handleUpdateOrderStatus,

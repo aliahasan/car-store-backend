@@ -57,28 +57,8 @@ const handleCancelOrder = (0, tryCatchAsync_1.default)((req, res) => __awaiter(v
         data: result,
     });
 }));
-const handleTotalRevenue = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const totalRevenue = yield order_services_1.orderService.calculateTotalRevenue();
-        res.status(200).json({
-            success: true,
-            message: ' Revenue calculated successfully',
-            data: {
-                totalRevenue,
-            },
-        });
-    }
-    catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-            error: 'Failed to calculate total revenue',
-        });
-    }
-});
 exports.orderController = {
     handlePlaceOrder,
-    handleTotalRevenue,
     handleGetAllUsersOrders,
     verifyPayment,
     handleCancelOrder,

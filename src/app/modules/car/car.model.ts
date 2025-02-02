@@ -21,9 +21,8 @@ const carSchema = new Schema<TCar, CarMOdel>(
       trim: true,
     },
     year: {
-      type: Number,
+      type: String,
       required: true,
-      min: 1886,
     },
     price: {
       type: Number,

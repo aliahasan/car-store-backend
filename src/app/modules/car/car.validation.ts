@@ -18,10 +18,7 @@ export const carValidationSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   brand: z.string().min(1, 'Brand is required'),
   model: z.string().min(1, 'Model is required'),
-  year: z
-    .number()
-    .min(1886, 'Year must be at least 1886')
-    .max(new Date().getFullYear(), 'Year cannot be in the future'),
+  year: z.string(),
   price: z.number().min(0, 'Price must be a positive number'),
   category: CarCategoryEnum,
   description: z.string().min(1, 'Description is required'),

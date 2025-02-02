@@ -4,13 +4,13 @@ export interface TCar {
   name: string;
   brand: string;
   model: string;
-  year: number;
+  year?: string;
   price: number;
   category: 'Sedan' | 'SUV' | 'Truck' | 'Coupe' | 'Convertible' | 'Van';
   description: string;
   quantity: number;
   color: string[];
-  mileage: number; // Mileage (in km per liter or miles per gallon)
+  mileage: number;
   fuelType: 'Petrol' | 'Diesel' | 'Electric' | 'Hybrid';
   transmission: 'Manual' | 'Automatic';
   engineCapacity: number;
@@ -18,10 +18,8 @@ export interface TCar {
   features: string[];
   rating: number;
   images: string | string[];
-  warranty: string; // Warranty information (e.g., "5 years/100,000 km")
+  warranty: string;
   isStock: boolean;
-
-  discount?: number; // Optional field for discounts
 }
 
 export interface CarMOdel extends Model<TCar> {

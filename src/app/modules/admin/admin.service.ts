@@ -13,6 +13,16 @@ const getAllUsers = async () => {
   return users;
 };
 
+const getAllOrders = async () => {
+  const orders = await Order.find()
+    .populate('user', 'email name')
+    .populate('cars.car', 'name images');
+  if (!orders) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'No orders found');
+  }
+  return orders;
+};
+
 const changeStatus = async (userId: string, payload: Partial<TUser>) => {
   const blockedUser = await User.findByIdAndUpdate(
     userId,
@@ -89,6 +99,7 @@ const cancelOrderByAdmin = async (orderId: string) => {
 
 export const authServices = {
   getAllUsers,
+  getAllOrders,
   changeStatus,
   changeRole,
   updateOrderStatus,
