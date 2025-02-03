@@ -44,6 +44,7 @@ const handleGetCarById = tryCatchAsync(async (req, res) => {
 const handleUpdateCarById = tryCatchAsync(async (req, res) => {
   const { carId } = req.params;
   const carData = req.body;
+  console.log(carData);
   const result = await CarServices.updateCarById(carId, carData);
   sendResponse(res, {
     success: true,

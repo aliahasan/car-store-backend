@@ -36,8 +36,16 @@ const changePasswordValidationSchema = z.object({
   newPassword: z.string({ required_error: 'Password is required' }),
 });
 
+export const updateUserSchema = z.object({
+  name: z.string().min(3).optional(),
+  phone: z.string().optional(),
+  address: z.string().optional(),
+  city: z.string().optional(),
+});
+
 export const userValidations = {
   registerValidationSchema,
   loginValidationSchema,
   changePasswordValidationSchema,
+  updateUserSchema,
 };

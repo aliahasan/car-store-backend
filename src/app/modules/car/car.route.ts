@@ -14,6 +14,7 @@ router.post(
 router.get('/all-cars', CarController.handleGetAllCar);
 
 router.get('/:carId', CarController.handleGetCarById);
+
 router.put(
   '/update/:carId',
   auth('admin'),

@@ -23,18 +23,23 @@ const getAllOrders = async () => {
   return orders;
 };
 
-const changeStatus = async (payload: Record<string, unknown>) => {
-  const user = await User.findById(payload?.userId);
+const changeStatus = async (
+  payload: Record<string, unknown>,
+  userId: string
+) => {
+  const user = await User.findOne({ _id: userId });
   if (!user) {
     throw new AppError(StatusCodes.NOT_FOUND, 'User not found');
   }
+
   const blockedUser = await User.findByIdAndUpdate(
-    payload?.userId,
+    user._id,
     {
       isBlocked: payload.isBlocked,
     },
     {
       runValidators: true,
+      new: true,
     }
   );
 
@@ -58,19 +63,22 @@ const changeRole = async (userId: string, payload: Partial<TUser>) => {
   return updateUser;
 };
 
-const updateOrderStatus = async (payload: Record<string, unknown>) => {
-  const order = await Order.findById(payload?.orderId);
+const updateOrderStatus = async (
+  payload: Record<string, unknown>,
+  orderId: string
+) => {
+  const order = await Order.findOne({ _id: orderId });
   if (!order) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Order not found');
   }
   if (order?.paymentStatus !== 'paid') {
     throw new AppError(
       StatusCodes.FORBIDDEN,
-      `Payment is ${order?.paymentStatus}.you can not update status`
+      `Payment is ${order?.paymentStatus}.you can not accept it`
     );
   }
-  const updateOrder = await Order.findByIdAndUpdate(
-    payload?.orderId,
+  const updateOrder = await Order.findOneAndUpdate(
+    order._id,
     {
       orderStatus: payload.orderStatus,
     },

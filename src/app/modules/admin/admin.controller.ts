@@ -14,7 +14,11 @@ const handleGetAllUser = tryCatchAsync(async (req, res) => {
 
 const handleUpdateUserStatus = tryCatchAsync(async (req, res) => {
   const updatedUserInfo = req.body;
-  const result = await authServices.changeStatus(updatedUserInfo);
+  const { userId } = req.query;
+  const result = await authServices.changeStatus(
+    updatedUserInfo,
+    userId as string
+  );
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
@@ -61,7 +65,11 @@ const handleUpdateDeliveryStatus = tryCatchAsync(async (req, res) => {
 
 const handleUpdateOrderStatus = tryCatchAsync(async (req, res) => {
   const updatedOrderInfo = req.body;
-  const result = await authServices.updateOrderStatus(updatedOrderInfo);
+  const { orderId } = req.query;
+  const result = await authServices.updateOrderStatus(
+    updatedOrderInfo,
+    orderId as string
+  );
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,

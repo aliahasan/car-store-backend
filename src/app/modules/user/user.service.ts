@@ -1,7 +1,6 @@
 import bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { JwtPayload } from 'jsonwebtoken';
 import config from '../../config';
 import AppError from '../../errors/AppError';
 import { StringValue } from '../../global/types';
@@ -54,35 +53,61 @@ const loginUser = async (payload: Payload) => {
 };
 
 const changePassword = async (
-  userData: JwtPayload,
+  email: string,
   payload: { oldPassword: string; newPassword: string }
 ) => {
-  const user = await User.isUserExist(userData.userId);
+  // Find the user by email
+  const user = await User.findOne({ email });
   if (!user) {
     throw new AppError(StatusCodes.NOT_FOUND, 'User not found');
   }
-  const isBlocked = user?.isBlocked;
-  if (isBlocked) {
-    throw new AppError(StatusCodes.FORBIDDEN, 'Your account is blocked');
+
+  // Check if the provided old password matches the stored password
+  const isMatch = await User.isPasswordMatch(
+    payload.oldPassword,
+    user.password
+  );
+  if (!isMatch) {
+    throw new AppError(StatusCodes.UNAUTHORIZED, 'Password does not match');
   }
-  if (!(await User.isPasswordMatch(payload.oldPassword, user?.password))) {
-    throw new AppError(StatusCodes.UNAUTHORIZED, 'Password do not matched');
-  }
+
+  // Hash the new password
   const newHashedPassword = await bcrypt.hash(
     payload.newPassword,
     Number(config.bcrypt_salt_round)
   );
+
+  // Update the user's password and set the passwordChangedAt field
   await User.findOneAndUpdate(
-    {
-      _id: userData?.userId,
-      role: userData?.role,
-    },
+    { _id: user._id },
     {
       password: newHashedPassword,
       passwordChangedAt: new Date(),
-    }
+    },
+    { new: true }
   );
-  return null;
+
+  return 'password changed successfully';
+};
+
+const getMeByEmail = async (email: string) => {
+  const user = await User.findOne({ email: email });
+  if (!user) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'User not found');
+  }
+  return user;
+};
+
+const updateMyself = async (email: string, payload: Partial<TUser>) => {
+  const user = await User.findOne({ email: email });
+  if (!user) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'User not found');
+  }
+  const result = await User.findOneAndUpdate({ email: user.email }, payload, {
+    new: true,
+    runValidators: true,
+  });
+  return result;
 };
 
 const logoutUser = async (req: Request, res: Response) => {
@@ -99,4 +124,6 @@ export const userServices = {
   loginUser,
   logoutUser,
   changePassword,
+  getMeByEmail,
+  updateMyself,
 };

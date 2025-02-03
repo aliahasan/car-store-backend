@@ -24,7 +24,6 @@ const userSchema = new Schema<TUser, UserModel>(
       type: String,
       required: true,
       minlength: 6,
-      // select: false,
     },
     phone: {
       type: String,

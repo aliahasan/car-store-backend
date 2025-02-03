@@ -35,12 +35,36 @@ const handleLoginUser = tryCatchAsync(async (req, res) => {
 });
 
 const handleChangePassword = tryCatchAsync(async (req, res) => {
-  const { ...passwordData } = req.body;
-  const result = await userServices.changePassword(req.user, passwordData);
+  const payload = req.body;
+  const { email } = req.query;
+  const result = await userServices.changePassword(email as string, payload);
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
     message: 'Password is updated successfully!',
+    data: result,
+  });
+});
+
+const handleGetMe = tryCatchAsync(async (req, res) => {
+  const { email } = req.query;
+  const result = await userServices.getMeByEmail(email as string);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'User fetched successfully',
+    data: result,
+  });
+});
+
+const handleUpdateUserInfo = tryCatchAsync(async (req, res) => {
+  const { email } = req.query;
+  const updatedData = req.body;
+  const result = await userServices.updateMyself(email as string, updatedData);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'User updated successfully',
     data: result,
   });
 });
@@ -59,4 +83,6 @@ export const userControllers = {
   handleLoginUser,
   handleLogOutUser,
   handleChangePassword,
+  handleGetMe,
+  handleUpdateUserInfo,
 };
