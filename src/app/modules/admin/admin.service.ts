@@ -6,7 +6,7 @@ import { TUser } from '../user/user.interface';
 import User from '../user/user.model';
 
 const getAllUsers = async () => {
-  const users = await User.find();
+  const users = await User.find().select('-password');
   if (!users) {
     throw new AppError(StatusCodes.NOT_FOUND, 'No users found');
   }

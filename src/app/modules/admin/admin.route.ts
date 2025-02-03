@@ -3,7 +3,6 @@ import auth from '../../middlewares/auth';
 import validateRequest from '../../middlewares/validateRequest';
 import { adminControllers } from './admin.controller';
 import { adminValidations } from './admin.validation';
-
 const router = Router();
 
 router.get('/all-users', auth('admin'), adminControllers.handleGetAllUser);

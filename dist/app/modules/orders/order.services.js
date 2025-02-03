@@ -47,6 +47,7 @@ const placeOrder = (userId, payload, client_ip) => __awaiter(void 0, void 0, voi
     })));
     let order = yield order_model_1.default.create({
         user: userId,
+        email: user === null || user === void 0 ? void 0 : user.email,
         cars: carDetails,
         totalPrice,
     });
@@ -129,24 +130,23 @@ const verifyPayment = (order_id) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 // calculate the total revenue by aggregation pipeline
-const getAllUsersOrders = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield order_model_1.default.find({ user: userId }).populate('cars.car', 'name , images');
+const getAllUsersOrders = (email) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield order_model_1.default.find({ email: email }).populate('cars.car', 'name , images');
     if (!result || result.length === 0) {
         throw new AppError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'No orders found');
     }
     return result;
 });
 const cancelOrder = (orderId) => __awaiter(void 0, void 0, void 0, function* () {
-    const order = yield order_model_1.default.findById(orderId);
+    const order = yield order_model_1.default.findOne({ _id: orderId });
     if (!order) {
         throw new AppError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'Order not found');
     }
-    if (order.orderStatus === 'accept') {
+    //accepted
+    if (order.orderStatus === 'accepted') {
         throw new AppError_1.default(http_status_codes_1.StatusCodes.FORBIDDEN, 'Order already accepted ! you can not cancel it');
     }
-    yield order_model_1.default.findByIdAndDelete(order._id, {
-        runValidators: true,
-    });
+    yield order_model_1.default.deleteOne(order === null || order === void 0 ? void 0 : order._id);
     return 'Order deleted successfully';
 });
 exports.orderService = {

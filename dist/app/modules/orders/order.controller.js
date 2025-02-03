@@ -38,8 +38,8 @@ const verifyPayment = (0, tryCatchAsync_1.default)((req, res) => __awaiter(void 
     });
 }));
 const handleGetAllUsersOrders = (0, tryCatchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { userId } = req.user;
-    const result = yield order_services_1.orderService.getAllUsersOrders(userId);
+    const { email } = req.query;
+    const result = yield order_services_1.orderService.getAllUsersOrders(email);
     (0, sendResponse_1.default)(res, {
         success: true,
         statusCode: http_status_codes_1.StatusCodes.OK,
@@ -48,7 +48,7 @@ const handleGetAllUsersOrders = (0, tryCatchAsync_1.default)((req, res) => __awa
     });
 }));
 const handleCancelOrder = (0, tryCatchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { orderId } = req.params;
+    const { orderId } = req.query;
     const result = yield order_services_1.orderService.cancelOrder(orderId);
     (0, sendResponse_1.default)(res, {
         success: true,

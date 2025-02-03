@@ -35,6 +35,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const orderSchema = new mongoose_1.Schema({
     user: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true },
+    email: {
+        type: String,
+        required: true,
+    },
     cars: [
         {
             car: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Car', required: true },
@@ -54,7 +58,7 @@ const orderSchema = new mongoose_1.Schema({
     },
     orderStatus: {
         type: String,
-        enum: ['pending', 'accept', 'reject'],
+        enum: ['pending', 'accepted', 'reject'],
         default: 'pending',
         required: true,
     },
