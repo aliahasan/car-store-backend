@@ -14,7 +14,7 @@ const handleGetAllUser = tryCatchAsync(async (req, res) => {
 
 const handleUpdateUserStatus = tryCatchAsync(async (req, res) => {
   const updatedUserInfo = req.body;
-  const { userId } = req.query;
+  const { userId } = req.params;
   const result = await authServices.changeStatus(
     updatedUserInfo,
     userId as string

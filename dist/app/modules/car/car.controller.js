@@ -55,7 +55,6 @@ const handleGetCarById = (0, tryCatchAsync_1.default)((req, res) => __awaiter(vo
 const handleUpdateCarById = (0, tryCatchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { carId } = req.params;
     const carData = req.body;
-    console.log(carData);
     const result = yield car_services_1.CarServices.updateCarById(carId, carData);
     (0, sendResponse_1.default)(res, {
         success: true,

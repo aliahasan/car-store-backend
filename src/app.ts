@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ['http://localhost:5173', 'https://car-store-backend.vercel.app'],
+    origin: ['https://car-shop-olive.vercel.app'],
     credentials: true,
   })
 );

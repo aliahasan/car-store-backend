@@ -31,6 +31,10 @@ const changeStatus = async (
   if (!user) {
     throw new AppError(StatusCodes.NOT_FOUND, 'User not found');
   }
+  const role = user?.role;
+  if (role === 'admin') {
+    throw new AppError(StatusCodes.FORBIDDEN, 'admin can not be blocked');
+  }
 
   const blockedUser = await User.findByIdAndUpdate(
     user._id,

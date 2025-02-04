@@ -10,7 +10,7 @@ router.get('/all-users', auth('admin'), adminControllers.handleGetAllUser);
 router.get('/all-orders', auth('admin'), adminControllers.handleGetAllOrders);
 
 router.patch(
-  '/change-status',
+  '/change-status/:userId',
   auth('admin'),
   validateRequest(adminValidations.updateUserSchema),
   adminControllers.handleUpdateUserStatus
