@@ -1,5 +1,5 @@
-import Car from '../../../car/car.model';
-import Order from '../../../orders/order.model';
+import Car from '../../car/car.model';
+import Order from '../../orders/order.model';
 
 const getAdminMetaData = async () => {
   const [orderStats, paymentStats, totalOrderCount, totalCars] =

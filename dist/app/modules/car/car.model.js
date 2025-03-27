@@ -55,7 +55,7 @@ const carSchema = new mongoose_1.Schema({
         trim: true,
     },
     year: {
-        type: String,
+        type: Number,
         required: true,
     },
     price: {
@@ -124,6 +124,10 @@ const carSchema = new mongoose_1.Schema({
         type: String,
         required: true,
         default: '2 year',
+    },
+    carStatus: {
+        type: String,
+        enum: ['Recondition', 'Used'],
     },
     isStock: {
         type: Boolean,

@@ -1,8 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
-
-import sendResponse from '../../../../utils/sendResponse';
-import tryCatchAsync from '../../../../utils/tryCatchAsync';
-import { adminMetaService } from './AdminMeta.service';
+import sendResponse from '../../../utils/sendResponse';
+import tryCatchAsync from '../../../utils/tryCatchAsync';
+import { adminMetaService } from './adminMeta.service';
 
 const handleGetAdminMetaData = tryCatchAsync(async (req, res) => {
   const result = await adminMetaService.getAdminMetaData();

@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { adminRoute } from '../modules/admin/admin.route';
 import { blogRoutes } from '../modules/blog/blog.routes';
 import { carRoutes } from '../modules/car/car.route';
-import { adminMetaRoutes } from '../modules/meta/adminMeta/providerMeta/adminMeta.route';
+import { adminMetaRoutes } from '../modules/meta/adminMeta/adminMeta.route';
 import { userMetaRoutes } from '../modules/meta/userMeta/userMeta.route';
 import { orderRoutes } from '../modules/orders/order.route';
 import { userRoutes } from '../modules/user/user.route';

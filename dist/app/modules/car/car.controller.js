@@ -74,10 +74,41 @@ const handleDeleteCarById = (0, tryCatchAsync_1.default)((req, res) => __awaiter
         data: result,
     });
 }));
+// get a single car and car info by Id
+const handleGetAllCarCategories = (0, tryCatchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield car_services_1.CarServices.getAllCarsCategory();
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_codes_1.StatusCodes.OK,
+        message: 'Categories  retrieved successfully',
+        data: result,
+    });
+}));
+const handleGetAllBrands = (0, tryCatchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield car_services_1.CarServices.getAllBrands();
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_codes_1.StatusCodes.OK,
+        message: 'Brands are  retrieved successfully',
+        data: result,
+    });
+}));
+const handleReconditionAndUsedCars = (0, tryCatchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield car_services_1.CarServices.getUsedAndReconditionCar();
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        statusCode: http_status_codes_1.StatusCodes.OK,
+        message: 'Cars are  retrieved successfully',
+        data: result,
+    });
+}));
 exports.CarController = {
     handleCreateCar,
     handleGetAllCar,
     handleGetCarById,
     handleUpdateCarById,
     handleDeleteCarById,
+    handleGetAllCarCategories,
+    handleGetAllBrands,
+    handleReconditionAndUsedCars,
 };
