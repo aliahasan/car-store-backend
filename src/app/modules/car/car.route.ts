@@ -12,7 +12,9 @@ router.post(
   CarController.handleCreateCar
 );
 router.get('/all-cars', CarController.handleGetAllCar);
-
+router.get('/categories', CarController.handleGetAllCarCategories);
+router.get('/brands', CarController.handleGetAllBrands);
+router.get('/recondition', CarController.handleReconditionAndUsedCars);
 router.get('/:carId', CarController.handleGetCarById);
 
 router.put(
@@ -27,4 +29,5 @@ router.delete(
   auth('admin'),
   CarController.handleDeleteCarById
 );
+
 export const carRoutes = router;

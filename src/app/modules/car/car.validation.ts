@@ -9,7 +9,7 @@ const CarCategoryEnum = z.enum([
   'Van',
   'Other',
 ]);
-
+const carStatusEnum = z.enum(['Recondition', 'Used']);
 const FuelTypeEnum = z.enum(['Petrol', 'Diesel', 'Electric', 'Hybrid']);
 
 const TransmissionEnum = z.enum(['Manual', 'Automatic']);
@@ -18,7 +18,7 @@ export const carValidationSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   brand: z.string().min(1, 'Brand is required'),
   model: z.string().min(1, 'Model is required'),
-  year: z.string(),
+  year: z.number(),
   price: z.number().min(0, 'Price must be a positive number'),
   category: CarCategoryEnum,
   description: z.string().min(1, 'Description is required'),
@@ -35,6 +35,7 @@ export const carValidationSchema = z.object({
   images: z.array(z.string().url('Must be a valid image URL')).optional(),
   warranty: z.string().min(1, 'Warranty information is required'),
   discount: z.number().min(0).max(100).optional(),
+  carStatus: carStatusEnum.optional(),
 });
 
 const updateCarValidationSchema = carValidationSchema.partial();

@@ -66,6 +66,38 @@ class QueryBuilder<T> {
     return this;
   }
 
+  ratings() {
+    const rating = Number(this.query?.averageRating);
+    if (!isNaN(rating) && rating > 0) {
+      this.queryModel = this.queryModel.find({
+        averageRating: { $gte: rating },
+      } as FilterQuery<T>);
+    }
+    return this;
+  }
+  year() {
+    const year = Number(this.query?.year);
+    if (!isNaN(year) && year > 0) {
+      this.queryModel = this.queryModel.find({
+        year: { $gte: year },
+      } as FilterQuery<T>);
+    }
+    return this;
+  }
+
+  priceRange(minPrice?: number, maxPrice?: number) {
+    const priceFilter: Record<string, unknown> = {};
+    if (minPrice !== undefined) priceFilter.$gte = minPrice;
+    if (maxPrice !== undefined) priceFilter.$lte = maxPrice;
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      this.queryModel = this.queryModel.find({
+        price: priceFilter,
+      } as FilterQuery<T>);
+    }
+
+    return this;
+  }
+
   async countTotal() {
     const totalQueries = this.queryModel.getFilter();
     const total = await this.queryModel.model.countDocuments(totalQueries);

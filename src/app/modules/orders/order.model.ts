@@ -15,6 +15,7 @@ const orderSchema = new Schema<TOrder, TOrderModel>(
       },
     ],
     totalPrice: { type: Number, required: true },
+
     paymentStatus: {
       type: String,
       enum: ['pending', 'paid', 'cancelled', 'failed'],

@@ -14,12 +14,15 @@ const createCar = async (carData: TCar) => {
 
 // get all the car services logic here
 const getAllCars = async (query: Record<string, unknown>) => {
-  const carsQuery = new QueryBuilder(Car.find(), query)
+  const { minPrice, maxPrice, ...cQuery } = query;
+  const carsQuery = new QueryBuilder(Car.find(), cQuery)
     .search(carSearchableFields)
     .filter()
     .sort()
     .paginate()
-    .fields();
+    .fields()
+    .priceRange(Number(minPrice) || 0, Number(maxPrice) || Infinity)
+    .year();
   const meta = await carsQuery.countTotal();
   const result = await carsQuery.queryModel;
   return {
@@ -61,10 +64,48 @@ const deleteCarById = async (carId: string) => {
   return true;
 };
 
+const getAllCarsCategory = async () => {
+  const categories = await Car.aggregate([
+    {
+      $group: {
+        _id: '$category',
+        image: { $first: '$images' },
+      },
+    },
+    { $project: { category: '$_id', image: 1, _id: 0 } },
+  ]);
+
+  if (!categories.length) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'No category found');
+  }
+  return categories;
+};
+
+const getAllBrands = async () => {
+  const brands = await Car.distinct('brand');
+  if (!brands) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'No brands found');
+  }
+  return brands;
+};
+
+const getUsedAndReconditionCar = async () => {
+  const cars = await Car.find({
+    carStatus: { $in: ['Recondition', 'Used'] },
+  });
+  if (!cars) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Cars are not found ');
+  }
+  return cars;
+};
+
 export const CarServices = {
   createCar,
   getAllCars,
   getCarById,
   updateCarById,
   deleteCarById,
+  getAllCarsCategory,
+  getAllBrands,
+  getUsedAndReconditionCar,
 };

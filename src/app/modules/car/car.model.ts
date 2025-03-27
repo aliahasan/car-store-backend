@@ -21,7 +21,7 @@ const carSchema = new Schema<TCar, CarMOdel>(
       trim: true,
     },
     year: {
-      type: String,
+      type: Number,
       required: true,
     },
     price: {
@@ -90,6 +90,10 @@ const carSchema = new Schema<TCar, CarMOdel>(
       type: String,
       required: true,
       default: '2 year',
+    },
+    carStatus: {
+      type: String,
+      enum: ['Recondition', 'Used'],
     },
     isStock: {
       type: Boolean,

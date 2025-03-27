@@ -4,7 +4,7 @@ export interface TCar {
   name: string;
   brand: string;
   model: string;
-  year?: string;
+  year: number;
   price: number;
   category: 'Sedan' | 'SUV' | 'Truck' | 'Coupe' | 'Convertible' | 'Van';
   description: string;
@@ -20,6 +20,7 @@ export interface TCar {
   images: string | string[];
   warranty: string;
   isStock: boolean;
+  carStatus?: 'Recondition' | 'Used';
 }
 
 export interface CarMOdel extends Model<TCar> {
